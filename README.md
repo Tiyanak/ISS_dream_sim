@@ -1,3 +1,2 @@
-# ISS_dream_sim
-
-Datum predaje: poslije nove godine
+# MonetaryIncentiveDelay
+A project for Interactive Simulation Systems university course.
