@@ -1,5 +1,4 @@
-﻿#pragma strict
-
+﻿"use strict";
 function Start () {
 	
 }
