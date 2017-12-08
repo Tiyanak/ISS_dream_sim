@@ -7,6 +7,8 @@ using UnityEngine.UI;
 public class Server : MonoBehaviour {
 
 	public Button serverBtn;
+	const short MyReactionMsg = 1002;
+	 const short MyParametersMsg = 1003;
 
 	// Use this for initialization
 	void Start () {
@@ -22,13 +24,35 @@ public class Server : MonoBehaviour {
 	void SetupServer() {
 
 		NetworkServer.Listen(4444);
-		NetworkServer.RegisterHandler(MsgType.Ready, OnMsgReceived);
+		NetworkServer.RegisterHandler(MyReactionMsg, OnReactionReceived);
+		NetworkServer.RegisterHandler(MyParametersMsg, OnParametersReceived);
 
 	}
 
-	void OnMsgReceived(NetworkMessage msg) {
-		MyMsg myMsg = msg.ReadMessage<MyMsg>();
-		Debug.Log("Server received: " + myMsg.message);
+	void OnReactionReceived(NetworkMessage msg) {
+
+		Debug.Log("Id: " + msg.msgType.ToString());
+
+		if (msg.msgType.Equals(1002)) {
+			Reaction reaction = msg.ReadMessage<Reaction>();
+			Debug.Log("Server received: " + reaction.ToString());
+		} else {
+			Debug.Log("Server received: unknown message");
+		}
+	
+	}
+
+	void OnParametersReceived(NetworkMessage msg) {
+
+		Debug.Log("Id: " + msg.msgType.ToString());
+
+		if (msg.msgType.Equals(1003)) {
+			Parameters parameters = msg.ReadMessage<Parameters>();
+			Debug.Log("Server received parameters: " + parameters.ToString());
+		} else {
+			Debug.Log("Server received: unknown message");
+		}
+	
 	}
 
 }
