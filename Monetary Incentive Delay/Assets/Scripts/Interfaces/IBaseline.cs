@@ -1,7 +1,8 @@
-namespace Scripts.Interfaces
+namespace Assets.Scripts.Interfaces
 {
     public interface IBaseline
     {
-        void SendResults(float[] results);
+        void SendResults(double[] results);
+        double GetSrt();
     }
 }
