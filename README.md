@@ -22,3 +22,4 @@ Razmjenjuju se tipovi poruka:
 
 Server mora slati poruku na klijentsku konekciju: SendMsg(string, NetConnection) {}, koju moze dobiti u MsgListener-u sa: msg.SenderConnection	
 	
+Import Lidgren-a u unity -> https://github.com/lidgren/lidgren-network-gen3/wiki/Unity3D
