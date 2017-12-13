@@ -3,6 +3,8 @@ A project for Interactive Simulation Systems university course.
 
 Prvo pokrenuti server, zatim klijent ako se zeli testirati C# konzolna aplikacija.
 
+! U NetPeerConfig(string imeaplikacije) -> i server i klijent moraju imati isto ime aplikacije! 
+
 Metode MsgListener() sluze za slusanje nadoolazezih poruka, kada ce se prebacivati u unity,
 potrebno je maknuti vanjsku while petlju i izvrsavati metodu u FixedUpdate() { MsgListener(); }
 
