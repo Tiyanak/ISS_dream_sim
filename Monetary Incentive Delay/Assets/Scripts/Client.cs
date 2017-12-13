@@ -33,7 +33,7 @@ public class Client : MonoBehaviour
 
 		myClient = new NetworkClient();
 		myClient.RegisterHandler(MsgType.Connect, OnConnected);
-		myClient.Connect("127.0.0.1", 4444);
+		myClient.Connect("127.0.0.1", 11111);
 	}
 
 	void OnConnected(NetworkMessage netMsg)
@@ -61,7 +61,15 @@ public class Client : MonoBehaviour
 
 	public bool SendReaction(TaskType type, bool incentive, double reactionTime, double threshold)
 	{
-		return myClient.Send(MyReactionMsg,  new Reaction(type, incentive, reactionTime, threshold));
+
+		NetworkWriter writer = new NetworkWriter();
+        writer.StartMessage(12345);
+        writer.Write(new Reaction(type, incentive, reactionTime, threshold).ToString());
+        writer.FinishMessage();
+
+        return myClient.SendWriter(writer, Channels.DefaultReliable);
+		
+		//return myClient.Send(MyReactionMsg,  new Reaction(type, incentive, reactionTime, threshold));
 	}
 
 	public bool ReceiveParameters(double targetDisplayTime,  double cueToTargetTime, double threshold)
