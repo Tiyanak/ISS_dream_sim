@@ -31,13 +31,12 @@ namespace Monetary_client
                 this.client.Start();
 
                 NetOutgoingMessage hailMsg = this.client.CreateMessage();
-                hailMsg.Write("Hello server!");
-
+                hailMsg.Write("Hello!");
                 NetConnection clientConnection = this.client.Connect(host, port, hailMsg);
+                Console.WriteLine("Client connected.");
 
                 Thread.Sleep(1000);
 
-                Console.WriteLine("Client connected: " + clientConnection.Status);
                 MsgListener();
             }
         }
@@ -56,31 +55,49 @@ namespace Monetary_client
                     switch (msg.MessageType)
                     {
                         case NetIncomingMessageType.Data:
-                            // handle custom messages
+
                             string data = msg.ReadString();
-                            Console.WriteLine("Client received data: " + data);
+                            NetConnection clientConnection = msg.SenderConnection;
+                            string clientId = msg.SenderConnection.RemoteUniqueIdentifier.ToString();
+
+                            Console.WriteLine("Received msg: " + data);
+
                             break;
 
                         case NetIncomingMessageType.StatusChanged:
-                            // handle connection status messages
+                          
                             switch (msg.SenderConnection.Status)
                             {
                                 case NetConnectionStatus.Connected:
-                                    Console.WriteLine("Client connected");
-                                    SendMsg("OnConnectedTestMsg: Winter is coming, prepare yourself server!");
+
+                                    string clientConnectedId = msg.SenderConnection.RemoteUniqueIdentifier.ToString();
+
+                                    Console.WriteLine("Client connected: " + clientConnectedId + " : " + client.UniqueIdentifier);
+
                                     break;
 
                                 case NetConnectionStatus.Disconnected:
-                                    Console.WriteLine("Client disconnected");
+
+                                    string clientDisconnectedId = msg.SenderConnection.RemoteUniqueIdentifier.ToString();
+                                    string goodByeMsg = msg.ReadString();
+
+                                    Console.WriteLine("Client disconnected: " + clientDisconnectedId + " : " + goodByeMsg);
+
                                     break;
                             }
+
                             break;
                             
                         default:
-                            Console.WriteLine("unhandled message with type: " + msg.MessageType);
+
+                            string unhandledMsgType = msg.MessageType.ToString();
+                            
                             break;
                     }
                 }
+
+                SendMsg(DateTime.Now.ToString("yyyyMMddHHmmss"));
+                Thread.Sleep(5000);
             }
         }
 
@@ -88,10 +105,7 @@ namespace Monetary_client
         {
             NetOutgoingMessage outMsg = this.client.CreateMessage();
             outMsg.Write(msg);
-
-            NetSendResult sendResult = this.client.SendMessage(outMsg, NetDeliveryMethod.ReliableOrdered);
-            Console.WriteLine("Sent message status: " + sendResult + " -> Message: " + msg);
-
+            NetSendResult sendResult = this.client.SendMessage(outMsg, NetDeliveryMethod.ReliableOrdered);          
         }
 
     }

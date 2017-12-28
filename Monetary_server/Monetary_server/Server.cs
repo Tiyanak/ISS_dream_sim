@@ -17,6 +17,7 @@ namespace Monetary_server
         NetServer server;
         NetIncomingMessage msg;
         int port = 11111;
+        Writer writer;
 
         public Server()
         {
@@ -36,12 +37,11 @@ namespace Monetary_server
             if (this.server != null)
             {
                 this.server.Start();
+                Console.WriteLine("Server started.");
 
                 Thread.Sleep(1000);
-
-                Console.WriteLine("Server started!");     
-                MsgListener();
-                
+               
+                MsgListener();                
             }
         }
 
@@ -56,30 +56,45 @@ namespace Monetary_server
                         case NetIncomingMessageType.Data:
 
                             string data = msg.ReadString();
-                            Console.WriteLine("Client: " + msg.SenderConnection.RemoteUniqueIdentifier.ToString() + " -> Data: " + data);
+                            NetConnection clientConnection = msg.SenderConnection;
+                            string clientId = msg.SenderConnection.RemoteUniqueIdentifier.ToString();
+                            writer.writeLine("1,2,3," + data);
 
-                            SendMsg("Message is received to server!",  msg.SenderConnection);                            
+                            Console.WriteLine("Received msg: " + data);
+                           
                             break;
 
                         case NetIncomingMessageType.StatusChanged:
+
                             switch (msg.SenderConnection.Status)
                             {
                                 case NetConnectionStatus.Connected:
-                                    Console.WriteLine("Client status: Connected -> " + msg.SenderConnection.RemoteUniqueIdentifier.ToString() 
-                                        + " -> Hail message: " + msg.SenderConnection.RemoteHailMessage.ReadString());
+
+                                    string clientConnectedId = msg.SenderConnection.RemoteUniqueIdentifier.ToString();
+                                    string hailMessage = msg.SenderConnection.RemoteHailMessage.ReadString();
+                                    writer = new Writer();
+
+                                    Console.WriteLine("Client connected: " + clientConnectedId + " : " + hailMessage);
+
                                     break;
 
                                 case NetConnectionStatus.Disconnected:
-                                    Console.WriteLine("Client status: Disconnected -> " + msg.SenderConnection.RemoteUniqueIdentifier.ToString()
-                                         + " -> Goodbye message: " + msg.ReadString());
+
+                                    string clientDisconnectedId = msg.SenderConnection.RemoteUniqueIdentifier.ToString();
+                                    string goodByeMsg = msg.ReadString();
+                                    this.writer.closeFile();
+
+                                    Console.WriteLine("Client disconnected: " + clientDisconnectedId + " : " + goodByeMsg);
+
                                     break;
                             }
+
                             break;
 
                         default:
-                            Console.WriteLine("Unhandles message with type: " + msg.MessageType);
+                            string unhandledMsgType = msg.MessageType.ToString();
+                          
                             break;
-
                     }
                 }
             }
@@ -92,11 +107,8 @@ namespace Monetary_server
             
             if (clientConnection != null)
             {
-                NetSendResult sendResult = this.server.SendMessage(outMsg, clientConnection, NetDeliveryMethod.ReliableOrdered);
-                Console.WriteLine("Sent message status: " + sendResult + " -> Message: " + msg);
-            }
-
-           
+                NetSendResult sendResult = this.server.SendMessage(outMsg, clientConnection, NetDeliveryMethod.ReliableOrdered);               
+            }            
         }
 
     }
