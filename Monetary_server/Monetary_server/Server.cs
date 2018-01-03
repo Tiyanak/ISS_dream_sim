@@ -58,8 +58,17 @@ namespace Monetary_server
                             string data = msg.ReadString();
                             NetConnection clientConnection = msg.SenderConnection;
                             string clientId = msg.SenderConnection.RemoteUniqueIdentifier.ToString();
-                            writer.writeLine("1,2,3," + data);
 
+                            try
+                            {
+                                Reaction r = new Reaction(data);
+                                data = r.ToString();
+                            } catch (Exception e)
+                            {
+                                Console.WriteLine("Cant deserialize that.");
+                            }
+
+                            // writer.writeLine(data); // this is example code for write to file
                             Console.WriteLine("Received msg: " + data);
                            
                             break;

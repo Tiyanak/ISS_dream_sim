@@ -8,7 +8,7 @@ using System.Threading;
 
 namespace Monetary_client
 {
-    class Client
+    public class Client
     {
 
         string host;
@@ -48,56 +48,60 @@ namespace Monetary_client
 
         public void MsgListener()
         {            
-            while (this.client.Status == NetPeerStatus.Running)
+            while ((msg = this.client.ReadMessage()) != null)
             {
-                while ((msg = this.client.ReadMessage()) != null)
+                switch (msg.MessageType)
                 {
-                    switch (msg.MessageType)
-                    {
-                        case NetIncomingMessageType.Data:
+                    case NetIncomingMessageType.Data:
 
-                            string data = msg.ReadString();
-                            NetConnection clientConnection = msg.SenderConnection;
-                            string clientId = msg.SenderConnection.RemoteUniqueIdentifier.ToString();
+                        string data = msg.ReadString();
+                        NetConnection clientConnection = msg.SenderConnection;
+                        string clientId = msg.SenderConnection.RemoteUniqueIdentifier.ToString();
 
-                            Console.WriteLine("Received msg: " + data);
+                        try
+                        {
+                            Parameters r = new Parameters(data);
+                            data = r.ToString();
+                        }
+                        catch (Exception e)
+                        {
+                            Console.WriteLine("Cant deserialize that.");
+                        }
 
-                            break;
+                        Console.WriteLine("Received msg: " + data);
 
-                        case NetIncomingMessageType.StatusChanged:
+                        break;
+
+                    case NetIncomingMessageType.StatusChanged:
                           
-                            switch (msg.SenderConnection.Status)
-                            {
-                                case NetConnectionStatus.Connected:
+                        switch (msg.SenderConnection.Status)
+                        {
+                            case NetConnectionStatus.Connected:
 
-                                    string clientConnectedId = msg.SenderConnection.RemoteUniqueIdentifier.ToString();
+                                string clientConnectedId = msg.SenderConnection.RemoteUniqueIdentifier.ToString();
 
-                                    Console.WriteLine("Client connected: " + clientConnectedId + " : " + client.UniqueIdentifier);
+                                Console.WriteLine("Client connected: " + clientConnectedId + " : " + client.UniqueIdentifier);
 
-                                    break;
+                                break;
 
-                                case NetConnectionStatus.Disconnected:
+                            case NetConnectionStatus.Disconnected:
 
-                                    string clientDisconnectedId = msg.SenderConnection.RemoteUniqueIdentifier.ToString();
-                                    string goodByeMsg = msg.ReadString();
+                                string clientDisconnectedId = msg.SenderConnection.RemoteUniqueIdentifier.ToString();
+                                string goodByeMsg = msg.ReadString();
 
-                                    Console.WriteLine("Client disconnected: " + clientDisconnectedId + " : " + goodByeMsg);
+                                Console.WriteLine("Client disconnected: " + clientDisconnectedId + " : " + goodByeMsg);
 
-                                    break;
-                            }
+                                break;
+                        }
 
-                            break;
+                        break;
                             
-                        default:
+                    default:
 
-                            string unhandledMsgType = msg.MessageType.ToString();
+                        string unhandledMsgType = msg.MessageType.ToString();
                             
-                            break;
-                    }
+                        break;
                 }
-
-                SendMsg(DateTime.Now.ToString("yyyyMMddHHmmss"));
-                Thread.Sleep(5000);
             }
         }
 

@@ -8,10 +8,6 @@ namespace Monetary_client
 {
     class Program
     {
-        static void Main(string[] args)
-        {
-            Client client = new Client();
-            client.Connect("127.0.0.1", 11111);
-        }
+       
     }
 }
