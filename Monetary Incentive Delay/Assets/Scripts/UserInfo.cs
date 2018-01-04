@@ -4,7 +4,7 @@ using UnityEngine.UI;
 
 public class UserInfo : MonoBehaviour {
 
-	float timeOnScreen = 8;
+	float timeOnScreen = 1;
 	float passedTime = 0;
 
 	List<GameObject> panelList;
