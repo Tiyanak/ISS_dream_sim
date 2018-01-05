@@ -6,19 +6,12 @@ using Monetary_client;
 public class UnityClient : MonoBehaviour
 {
  	
-	public Button clientBtn;
-	public Button sendBtn;
 	public int counter = 0;
 
     Client client;
 
     void Start()
 	{
-		Button btnClient = clientBtn.GetComponent<Button>();
-		btnClient.onClick.AddListener(SetupClient);
-
-		Button btnSend = sendBtn.GetComponent<Button>();
-		sendBtn.onClick.AddListener(SendMsg);
 	}
 
     void Update()
