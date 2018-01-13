@@ -4,35 +4,55 @@ using UnityEngine;
 using System;
 using UnityEngine.UI;
 
-public static class MapSquares {
+public class MapSquares {
 
-    private static GameObject ClickSquare = GameObject.Find("ClickSquare");
-    private static GameObject ControlSquare = GameObject.Find("ControlSquare");
-    private static GameObject NonControlSquare = GameObject.Find("NonControlSquare");
-    private static GameObject RewardSquare = GameObject.Find("RewardSquare");
-    private static GameObject NonRewardSquare = GameObject.Find("NonRewardSquare");
-    private static GameObject PunishmentSquare = GameObject.Find("PunishmentSquare");
-    private static GameObject NonPunishmentSquare = GameObject.Find("NonPunishmentSquare");
+    private GameObject ClickSquare, ControlSquare, NonControlSquare, RewardSquare, NonRewardSquare, PunishmentSquare, NonPunishmentSquare;
+    private System.Random random;
+    private Dictionary<int, GameObject> ALL_SQUARES;
 
-    private static readonly System.Random random = new System.Random();
+    public MapSquares() {
+        this.random = new System.Random();
+        this.ClickSquare = GameObject.Find("ClickSquare");
+        this.ControlSquare = GameObject.Find("ControlSquare");
+        this.NonControlSquare = GameObject.Find("NonControlSquare");
+        this.RewardSquare = GameObject.Find("RewardSquare");
+        this.NonRewardSquare = GameObject.Find("NonRewardSquare");
+        this.PunishmentSquare = GameObject.Find("PunishmentSquare");
+        this.NonPunishmentSquare = GameObject.Find("NonPunishmentSquare");
 
-    private static Dictionary<int, GameObject> ALL_SQUARES = new Dictionary<int, GameObject>() {
-        { 0, ClickSquare }, { 1, ControlSquare }, { 2,  NonControlSquare }, { 3, RewardSquare }, { 4, NonRewardSquare }, { 5, PunishmentSquare }, { 6, NonPunishmentSquare }
-    };
+        this.ALL_SQUARES = new Dictionary<int, GameObject>() {
+            { 0, ClickSquare },
+            { 1, ControlSquare }, { 2,  NonControlSquare },
+            { 3, RewardSquare }, { 4, NonRewardSquare },
+            { 5, PunishmentSquare }, { 6, NonPunishmentSquare }
+        };
+    }
 
-    public static GameObject GetClickSquare()
+    public GameObject GetClickSquare()
     {
         return ClickSquare;
     }
     
-    public static GameObject PickRandomAllSquare()
+    public GameObject GetNonPunishmentSquare() {
+        return NonPunishmentSquare;
+    }
+
+    public GameObject GetNonRewardSquare() {
+        return NonRewardSquare;
+    }
+
+    public GameObject GetNonControlSquare() {
+        return NonControlSquare;
+    }
+
+    public GameObject PickRandomAllSquare()
     {
         int squareIndex = random.Next(1, 7);
 
         return ALL_SQUARES[squareIndex];
     }
 
-    public static GameObject PickRandomControlSquare(double controlChance)
+    public GameObject PickRandomControlSquare(double controlChance)
     {
         double chance = random.NextDouble();          
 
@@ -45,7 +65,7 @@ public static class MapSquares {
         }
     }
 
-    public static GameObject PickRandomRewardSquare(double rewardChance)
+    public GameObject PickRandomRewardSquare(double rewardChance)
     {
         double chance = random.NextDouble();
 
@@ -59,7 +79,7 @@ public static class MapSquares {
         }
     }
 
-    public static GameObject PickRandomPunishmentSquare(double punishmentChance)
+    public GameObject PickRandomPunishmentSquare(double punishmentChance)
     {
         double chance = random.NextDouble();
 

@@ -13,11 +13,13 @@ public class UserInfo : MonoBehaviour {
 	public GameObject Panel2;
 	public GameObject Panel3;
 	public GameObject Panel4;
+	
 	public Image Image;
 
 	// Use this for initialization
 	void Start () {
 		shownPanel = 0;
+		// scoreText.enabled = false;
 		panelList = new List<GameObject> {Panel1, Panel2, Panel3, Panel4};
 	}
 	
