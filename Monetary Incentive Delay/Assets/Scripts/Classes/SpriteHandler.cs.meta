@@ -1,0 +1,19 @@
+fileFormatVersion: 2
+guid: 0a0984faad2a47aeb0728dc05c675bd0
+timeCreated: 1515959057
+licenseType: Free
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - BaselineSprite: {instanceID: 0}
+  - NonIncentiveSprite: {instanceID: 0}
+  - TargetSprite: {instanceID: 0}
+  - ControlCueSprite: {instanceID: 0}
+  - RewardCueSprite: {instanceID: 0}
+  - PunishmentCueSprite: {instanceID: 0}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

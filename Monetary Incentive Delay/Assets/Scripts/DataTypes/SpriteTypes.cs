@@ -1,8 +1,6 @@
-﻿public static class BoxType
+﻿namespace DataTypes
 {
-
-	// Use this for initialization
-	public enum Type
+	public enum SpriteTypes
 	{
 		Baseline,
 		NonIncentive,
@@ -11,5 +9,4 @@
 		RewardCue,
 		PunishmentCue
 	}
-	
 }

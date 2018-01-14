@@ -2,7 +2,7 @@
 using System.Linq;
 using Assets.Scripts.Interfaces;
 
-namespace Assets.Scripts
+namespace Classes
 {
     public class Baseline : IBaseline
     {
@@ -15,7 +15,7 @@ namespace Assets.Scripts
         /// <param name="results"></param>
         public void SendResults(double[] results)
         {
-            double  mean = results.Average();
+            double mean = results.Average();
             double sumOfSquaresOfDifferences = results.Select(val => (val - mean) * (val - mean)).Sum();
             double stDev = Math.Sqrt(sumOfSquaresOfDifferences / results.Length);
 

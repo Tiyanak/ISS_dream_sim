@@ -1,5 +1,4 @@
 using UnityEngine;
-using UnityEngine.UI;
 using Assets.Scripts.DataTypes;
 using Monetary_client;
 

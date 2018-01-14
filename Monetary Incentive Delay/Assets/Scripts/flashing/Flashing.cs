@@ -1,11 +1,10 @@
-﻿using System.Collections.Generic;
-using System.Threading;
+﻿using DataTypes;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class Flashing : MonoBehaviour
 {
-	public BoxType.Type BoxType;
+	public SpriteTypes BoxType;
 	private const float EndTime = 5;
 	private float currentTime = 0;
 	private float waitTime = 0;

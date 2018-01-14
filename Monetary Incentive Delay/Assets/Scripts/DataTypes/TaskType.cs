@@ -2,6 +2,9 @@
 {
     public enum TaskType
     {
-        Control, Reward, Punishment
+        Baseline,
+        Control,
+        Reward,
+        Punishment
     }
 }

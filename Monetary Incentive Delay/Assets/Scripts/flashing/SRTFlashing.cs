@@ -2,6 +2,7 @@
 using UnityEngine.UI;
 using Monetary_client;
 using Assets.Scripts.DataTypes;
+using Classes;
 
 public class SRTFlashing : MonoBehaviour {
 
@@ -55,8 +56,7 @@ public class SRTFlashing : MonoBehaviour {
 
         int squareIndex = random.Next(2, 5);
 
-        LoadSceneOnClick lsc = new LoadSceneOnClick();
-        lsc.LoadByIndex(squareIndex);
+        //GuiHandler.LoadScene(squareIndex);
 
     }
 
