@@ -3,7 +3,7 @@ using DataTypes;
 using UnityEngine;
 using Image = UnityEngine.UI.Image;
 
-namespace Classes
+namespace Assets.Scripts.Classes
 {
     public class SpriteHandler : MonoBehaviour
     {
@@ -55,6 +55,7 @@ namespace Classes
                     throw new ArgumentOutOfRangeException(nameof(spriteType), spriteType, null);
             }
             newObj.GetComponent<RectTransform>().SetParent(panel.transform);
+	        newObj.transform.localPosition = new Vector3(0,0);
             newObj.SetActive(true);
             return newObj;
         }

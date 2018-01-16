@@ -1,18 +1,32 @@
-﻿using UnityEngine;
-
-namespace DataTypes
+﻿namespace Assets.Scripts.DataTypes
 {
     public class TimeSettings
     {
-        public int SpriteDelayTimeMiliseconds { get; private set; }
-        public int SpriteDisplayTimeMiliseconds { get; private set; }
-        public int InfoDisplayTimeMiliseconds { get; private set; }
+        public int SpriteDelayTimeMilliseconds => _spriteInterval.GetTime();
+	    private Interval _spriteInterval;
+        public int SpriteDisplayTimeMilliseconds { get; private set; }
+        public int InfoDisplayTimeMilliseconds { get; private set; }
 
-        public TimeSettings(int spriteDelayTimeMiliseconds, int spriteDisplayTimeMiliseconds, int infoDisplayTimeMiliseconds)
+        public TimeSettings(Interval spriteDelayInterval, int spriteDisplayTimeMilliseconds, int infoDisplayTimeMilliseconds)
         {
-            SpriteDelayTimeMiliseconds = spriteDelayTimeMiliseconds;
-            SpriteDisplayTimeMiliseconds = spriteDisplayTimeMiliseconds;
-            InfoDisplayTimeMiliseconds = infoDisplayTimeMiliseconds;
+	        _spriteInterval = spriteDelayInterval;
+            SpriteDisplayTimeMilliseconds = spriteDisplayTimeMilliseconds;
+            InfoDisplayTimeMilliseconds = infoDisplayTimeMilliseconds;
         }
-    }
+
+	    public void SetSpriteDelay(Interval spriteDelayInterval)
+	    {
+		    _spriteInterval = spriteDelayInterval;
+	    }
+
+	    public void SetSpriteDisplay(int spriteDisplayTimeMilliseconds)
+	    {
+		    SpriteDisplayTimeMilliseconds = spriteDisplayTimeMilliseconds;
+	    }
+
+	    public void SetInfoDisplay(int infoDisplayTimeMilliseconds)
+	    {
+		    InfoDisplayTimeMilliseconds = infoDisplayTimeMilliseconds;
+	    }
+	}
 }

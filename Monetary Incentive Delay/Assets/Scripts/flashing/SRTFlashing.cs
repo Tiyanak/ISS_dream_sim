@@ -2,7 +2,6 @@
 using UnityEngine.UI;
 using Monetary_client;
 using Assets.Scripts.DataTypes;
-using Classes;
 
 public class SRTFlashing : MonoBehaviour {
 

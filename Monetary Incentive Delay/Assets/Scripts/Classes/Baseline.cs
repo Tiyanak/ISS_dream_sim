@@ -2,7 +2,7 @@
 using System.Linq;
 using Assets.Scripts.Interfaces;
 
-namespace Classes
+namespace Assets.Scripts.Classes
 {
     public class Baseline : IBaseline
     {

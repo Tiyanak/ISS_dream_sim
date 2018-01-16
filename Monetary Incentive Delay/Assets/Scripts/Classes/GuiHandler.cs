@@ -1,17 +1,26 @@
 ﻿using UnityEngine;
 using UnityEngine.SceneManagement;
 
-namespace Classes
+namespace Assets.Scripts.Classes
 {
     public class GuiHandler : MonoBehaviour
     {
-        protected static void StaticLoadScene(int sceneIndex)
+	    private static int _currentScene;
+
+	    public static void NextScene()
+	    {
+		    SceneManager.LoadScene(_currentScene + 1, LoadSceneMode.Single);
+	    }
+
+		public static void StaticLoadScene(int sceneIndex)
         {
+	        _currentScene = sceneIndex;
             SceneManager.LoadScene(sceneIndex, LoadSceneMode.Single);
         }
 
         public void LoadScene(int sceneIndex)
         {
+	        _currentScene = sceneIndex;
             StaticLoadScene(sceneIndex);
         }
         

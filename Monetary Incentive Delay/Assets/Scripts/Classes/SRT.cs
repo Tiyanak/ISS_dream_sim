@@ -7,49 +7,48 @@ using UnityEngine.UI;
 
 namespace Assets.Scripts.Classes
 {
-	public class UserInfo : MonoBehaviour
+	public class SRT : MonoBehaviour
 	{
 		private readonly TimeSettings _timeSettings;
 		private DisplayStatus _currentDisplayStatus;
 		private float _passedTime;
-		private readonly int _showSpriteIndex = 3;
+		private readonly int _showSpriteIndex = 4;
 		private readonly List<string> _info = new List<string>
 		{
-			"First we need to determine your speed to make this a bit more challenging for you.",
-			"When the orange box appears, try to hit space as fast as humanly possible.",
-			"Let's give it a try.",
-			"",
-			"By the way, there won't be any rewards right now. This is only baseline round.",
-			"Prepare yourself for the test round."
+			"3",
+			"2",
+			"1",
+			"Begin",
+			""
 		};
-
-		private GameObject _panelInformation;
+		
 		private GameObject _sprite;
-		public GameObject PanelSrt;
-	
+		private GameObject _panelSrt;
+
 		private int _shownInfoText;
 		private bool _waitForUserInput;
 
-		public UserInfo()
+		public SRT()
 		{
-			_timeSettings = new TimeSettings(new Interval(500, 1000), 150, 1000);
+			_timeSettings = new TimeSettings(new Interval(500,750), 150, 1000);
 		}
-	
+
 		private void Start()
 		{
-			_panelInformation = gameObject;
+			_panelSrt = gameObject;
 			_currentDisplayStatus = DisplayStatus.DisplayingInfo;
 			_passedTime = 0;
 			_shownInfoText = 0;
 			_waitForUserInput = false;
-			_panelInformation.GetComponentInChildren<Text>().text = _info[_shownInfoText];
+			
+			_panelSrt.GetComponentInChildren<Text>().text = _info[_shownInfoText];
 		}
 
 		// Update is called once per frame
-		private void Update() 
+		private void Update()
 		{
 			_passedTime += Time.deltaTime * 1000;
-		
+
 			switch (_currentDisplayStatus)
 			{
 				case DisplayStatus.DisplayingInfo:
@@ -78,7 +77,7 @@ namespace Assets.Scripts.Classes
 					break;
 				default:
 					throw new ArgumentOutOfRangeException();
-			}	
+			}
 		}
 
 		private void ChangeText()
@@ -86,8 +85,7 @@ namespace Assets.Scripts.Classes
 			if (_shownInfoText + 1 == _info.Count)
 			{
 				_shownInfoText++;
-				_panelInformation.SetActive(false);
-				PanelSrt.SetActive(true);
+				GuiHandler.NextScene();
 			}
 			else
 			{
@@ -96,14 +94,14 @@ namespace Assets.Scripts.Classes
 					_waitForUserInput = true;
 					_currentDisplayStatus = DisplayStatus.WaitToDisplaySprite;
 				}
-				_panelInformation.GetComponentInChildren<Text>().text = _info[_shownInfoText];
-			}	
+				_panelSrt.GetComponentInChildren<Text>().text = _info[_shownInfoText];
+			}
 		}
 
 		private void HandleUserInput()
 		{
 			if (!Input.GetKeyDown("space")) return;
-			_panelInformation.GetComponentInChildren<Text>().text = "Your reaction took " + _passedTime + " miliseconds.";
+			_panelSrt.GetComponentInChildren<Text>().text = "Your reaction took " + _passedTime + " miliseconds.";
 			_currentDisplayStatus = DisplayStatus.DisplayingInfo;
 			_waitForUserInput = false;
 			_passedTime = 0;
@@ -111,7 +109,7 @@ namespace Assets.Scripts.Classes
 
 		private void ShowSprite()
 		{
-			_sprite = SpriteHandler.Sh.CreateSprite(SpriteTypes.Baseline, _panelInformation);
+			_sprite = SpriteHandler.Sh.CreateSprite(SpriteTypes.Baseline, _panelSrt);
 			_currentDisplayStatus = DisplayStatus.DisplayingSprite;
 		}
 
