@@ -29,12 +29,13 @@ namespace Assets.Scripts.DataTypes
 
 		public GlobalSettings()
 		{
-			const int numberOfTasks = 20;
+			const int numberOfTasks = 10;
 			BaselineSettings = new BaselineSettings(3000, 10);
 			ControlSettings = new TaskSettings(3000, TaskType.Control, numberOfTasks, 0.8f);
 			RewardSettings = new TaskSettings(3000, TaskType.Reward, numberOfTasks, 0.8f);
 			PunishmentSettings = new TaskSettings(3000, TaskType.Punishment, numberOfTasks, 0.8f);
 			SpriteSettings = new SpriteSettings();
+			Threshold = 400;
 		}
 
 		public void SetSettings(TaskSettings[] allSettings)

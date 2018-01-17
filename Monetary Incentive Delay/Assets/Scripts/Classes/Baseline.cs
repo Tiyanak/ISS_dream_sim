@@ -108,10 +108,7 @@ namespace Assets.Scripts.Classes
 				case DisplayStatus.Nothing:
 					break;
 				case DisplayStatus.GoToMainMenu:
-					if (_passedTime > _infoDisplayTime)
-					{
-						GuiHandler.GoToMainMenu();
-					}
+					GuiHandler.GoToMainMenu();
 					break;
 				default:
 					throw new ArgumentOutOfRangeException();
@@ -120,7 +117,7 @@ namespace Assets.Scripts.Classes
 
 		private void ChangeText()
 		{
-			if (_shownInfoText + 1 == _info.Count)
+			if (_shownInfoText + 1 >= _info.Count)
 			{
 				GuiHandler.GoToTests();
 			}

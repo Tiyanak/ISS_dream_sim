@@ -89,10 +89,7 @@ namespace Assets.Scripts.Classes
 					DisplayResults();
 					break;
 				case DisplayStatus.GoToMainMenu:
-					if (_passedTime > _infoTimeSetting)
-					{
-						GuiHandler.GoToMainMenu();
-					}
+					GuiHandler.GoToMainMenu();
 					break;
 				default:
 					throw new ArgumentOutOfRangeException();
@@ -101,7 +98,7 @@ namespace Assets.Scripts.Classes
 
 		private void ChangeText()
 		{
-			if (_shownInfoText + 1 == _info.Count)
+			if (_shownInfoText + 1 >= _info.Count)
 			{
 				_panelInformation.SetActive(false);
 				PanelSrt.SetActive(true);

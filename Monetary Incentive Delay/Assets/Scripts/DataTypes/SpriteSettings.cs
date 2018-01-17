@@ -18,12 +18,12 @@ namespace Assets.Scripts.DataTypes
 
         public SpriteSettings()
         {
-            const int rightAway = 0;
+            const int afterAWhile = 600;
             const int cueTimes = 500;
             BaselineSpriteSettings = new SpriteTime(new Interval(1000, 2000),new Interval(180, 200), SpriteTypes.Baseline);
             TargetSpriteSettings = new SpriteTime(new Interval(2000, 4000),new Interval(180, 200), SpriteTypes.Target);
-            CorrectSpriteSettings = new SpriteTime(new Interval(rightAway, rightAway),new Interval(cueTimes, cueTimes), SpriteTypes.Correct);
-            IncorrectSpriteSettings = new SpriteTime(new Interval(rightAway, rightAway),new Interval(cueTimes, cueTimes), SpriteTypes.Incorrect);
+            CorrectSpriteSettings = new SpriteTime(new Interval(afterAWhile, afterAWhile),new Interval(cueTimes, cueTimes), SpriteTypes.Correct);
+            IncorrectSpriteSettings = new SpriteTime(new Interval(afterAWhile, afterAWhile),new Interval(cueTimes, cueTimes), SpriteTypes.Incorrect);
             ControlCueSpriteSettings = new SpriteTime(new Interval(cueTimes, cueTimes),new Interval(cueTimes, cueTimes), SpriteTypes.ControlCue);
             ControlNonincentiveSpriteSettings = new SpriteTime(new Interval(cueTimes, cueTimes),new Interval(cueTimes, cueTimes), SpriteTypes.ControlNonIncentive);
             RewardCueSpriteSettings = new SpriteTime(new Interval(cueTimes, cueTimes),new Interval(cueTimes, cueTimes), SpriteTypes.RewardCue);

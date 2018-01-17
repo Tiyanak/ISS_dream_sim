@@ -11,7 +11,7 @@ using Random = System.Random;
 
 namespace Assets.Scripts.Classes
 {
-	public class ControlTask : MonoBehaviour
+	public class RewardTask : MonoBehaviour
 	{
 		private ITaskSettings _settings;
 		private DisplayStatus _currentDisplayStatus;
@@ -22,16 +22,16 @@ namespace Assets.Scripts.Classes
 
 		private readonly List<string> _info = new List<string>
 		{
-			"You have arrived at control task.",
-			"Here you won't gain nor lose any money.",
+			"You have arrived at reward task.",
+			"Here you will GAIN money at incentive tasks.",
 			"Your reaction time shall be recorded.",
 			"There are two different cues representing two different trials.",
-			"This box represents incentive cue, i.e. important",
-			"This box represents nonincentive cue, i.e. not important",
+			"This box represents incentive cue, i.e. reward",
+			"This box represents nonincentive cue, i.e. no reward",
 			"After these cues you may expect a target box to apprear.",
 			"Press space to begin",
 			"",
-			"Great. Now onto the next task."
+			"That's it. You finished the tasks successfully. Congratulations"
 		};
 
 		private double[] _reactionTimes;
@@ -41,8 +41,6 @@ namespace Assets.Scripts.Classes
 		private GameObject _currentSprite;
 		private SpriteTypes _currentSpriteType;
 		private GameObject _panel;
-		public GameObject RewardPanel;
-		public GameObject PunishmentPanel;
 
 		private int _shownInfoText;
 		private int _iter;
@@ -54,8 +52,8 @@ namespace Assets.Scripts.Classes
 		{
 			_panel = gameObject;
 			_settings = GlobalSettings.Gs != null
-				? GlobalSettings.Gs.ControlSettings
-				: new TaskSettings(2000, TaskType.Control, 20);
+				? GlobalSettings.Gs.RewardSettings
+				: new TaskSettings(2000, TaskType.Reward, 20);
 			_spriteSettings = GlobalSettings.Gs != null
 				? GlobalSettings.Gs.SpriteSettings
 				: new SpriteSettings();
@@ -119,10 +117,7 @@ namespace Assets.Scripts.Classes
 				case DisplayStatus.Nothing:
 					break;
 				case DisplayStatus.GoToMainMenu:
-					if (_passedTime > _settings.InfoTime)
-					{
-						GuiHandler.GoToMainMenu();
-					}
+					GuiHandler.GoToMainMenu();
 					break;
 				default:
 					throw new ArgumentOutOfRangeException();
@@ -133,12 +128,7 @@ namespace Assets.Scripts.Classes
 		{
 			if (_shownInfoText + 1 >= _info.Count)
 			{
-				_panel.SetActive(false);
-				var rand = new Random();
-				if(rand.NextDouble() < 0.5)
-					PunishmentPanel.SetActive(true);
-				else
-					RewardPanel.SetActive(true);
+				_currentDisplayStatus = DisplayStatus.GoToMainMenu;
 			}
 			else
 			{

@@ -14,8 +14,12 @@ namespace Assets.Scripts.Handlers
 				while (true)
 				{
 					int location = _rand.Next(fieldSize);
-					if (randomField[location - 1] != 1 && randomField[location + 1] != 1)
+					if ((location == 0 || randomField[location - 1] != 1 ) && (location == fieldSize - 1 || randomField[location + 1] != 1 ))
+					{
+						randomField[location] = 1;
 						break;
+					}
+						
 				}
 			}
 			return randomField;
