@@ -1,52 +1,63 @@
-using UnityEngine;
 using Assets.Scripts.DataTypes;
+using JetBrains.Annotations;
 using Monetary_client;
+using UnityEngine;
 
-public class UnityClient : MonoBehaviour
+namespace Assets.Scripts
 {
- 	
-	public int counter = 0;
-
-    Client client;
-
-    void Start()
-	{
-	}
-
-    void Update()
-    {
-        if (client != null)
-        {
-            ReceiveParameters();
-        }
-    }
-
-	void SetupClient()
-	{
-        client = new Client();
-        client.Connect("127.0.0.1", 11111);
-	}
-
-	void SendMsg()
-	{
-        SendReaction(TaskType.Control, true, 190, 140);
-	}
-
-	public bool SendReaction(TaskType type, bool incentive, double reactionTime, double threshold)
-	{
-        Reaction reaction = new Reaction(type.ToString(), incentive, reactionTime, threshold);
-        client.SendMsg(reaction.serialize());
-
-        return true;
-    }
-
-	public bool ReceiveParameters()
+	public class UnityClient : MonoBehaviour
 	{
 
-        client.MsgListener();
+		public int Counter;
 
-        return true;
+		Client _client;
 
+		public UnityClient()
+		{
+			Counter = 0;
+		}
+
+		[UsedImplicitly]
+		void Start()
+		{
+		}
+
+		[UsedImplicitly]
+		void Update()
+		{
+			if (_client != null)
+			{
+				ReceiveParameters();
+			}
+		}
+
+		void SetupClient()
+		{
+			_client = new Client();
+			_client.Connect("127.0.0.1", 11111);
+		}
+
+		void SendMsg()
+		{
+			SendReaction(TaskType.Control, true, 190, 140);
+		}
+
+		public bool SendReaction(TaskType type, bool incentive, double reactionTime, double threshold)
+		{
+			Reaction reaction = new Reaction(type.ToString(), incentive, reactionTime, threshold);
+			_client.SendMsg(reaction.serialize());
+
+			return true;
+		}
+
+		public bool ReceiveParameters()
+		{
+
+			_client.MsgListener();
+
+			return true;
+
+		}
 	}
 }
 

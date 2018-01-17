@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using Assets.Scripts.DataTypes;
-using DataTypes;
+using Assets.Scripts.Handlers;
+using JetBrains.Annotations;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -32,9 +33,10 @@ namespace Assets.Scripts.Classes
 
 		public UserInfo()
 		{
-			_timeSettings = new TimeSettings(new Interval(500, 1000), 150, 1000);
+			_timeSettings = new TimeSettings(new Interval(500, 1000), 2000, 1000);
 		}
-	
+
+		[UsedImplicitly]
 		private void Start()
 		{
 			_panelInformation = gameObject;
@@ -45,7 +47,7 @@ namespace Assets.Scripts.Classes
 			_panelInformation.GetComponentInChildren<Text>().text = _info[_shownInfoText];
 		}
 
-		// Update is called once per frame
+		[UsedImplicitly]
 		private void Update() 
 		{
 			_passedTime += Time.deltaTime * 1000;

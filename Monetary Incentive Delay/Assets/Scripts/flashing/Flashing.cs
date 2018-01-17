@@ -1,4 +1,4 @@
-﻿using DataTypes;
+﻿using Assets.Scripts.DataTypes;
 using UnityEngine;
 using UnityEngine.UI;
 

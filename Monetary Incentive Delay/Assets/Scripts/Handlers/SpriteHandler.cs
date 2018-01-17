@@ -1,22 +1,26 @@
 ﻿using System;
-using DataTypes;
+using Assets.Scripts.DataTypes;
+using JetBrains.Annotations;
 using UnityEngine;
 using Image = UnityEngine.UI.Image;
 
-namespace Assets.Scripts.Classes
+namespace Assets.Scripts.Handlers
 {
     public class SpriteHandler : MonoBehaviour
     {
         public static SpriteHandler Sh;
         
         public Sprite BaselineSprite;
-        public Sprite NonIncentiveSprite;
         public Sprite TargetSprite;
         public Sprite ControlCueSprite;
-        public Sprite RewardCueSprite;
-        public Sprite PunishmentCueSprite;
+	    public Sprite ControlNonIncentiveSprite;
+		public Sprite RewardCueSprite;
+	    public Sprite RewardNonIncentiveSprite;
+		public Sprite PunishmentCueSprite;
+	    public Sprite PunishmentNonIncentiveSprite;
 
-        private void Awake()
+	    [UsedImplicitly]
+		private void Awake()
         {
             if(Sh != null)
                 Destroy(Sh);
@@ -36,22 +40,28 @@ namespace Assets.Scripts.Classes
                 case SpriteTypes.Baseline:
                     newImage.sprite = BaselineSprite;
                     break;
-                case SpriteTypes.NonIncentive:
-                    newImage.sprite = NonIncentiveSprite;
-                    break;
                 case SpriteTypes.Target:
                     newImage.sprite = TargetSprite;
                     break;
                 case SpriteTypes.ControlCue:
                     newImage.sprite = ControlCueSprite;
                     break;
-                case SpriteTypes.RewardCue:
+	            case SpriteTypes.ControlNonIncentive:
+		            newImage.sprite = ControlNonIncentiveSprite;
+		            break;
+				case SpriteTypes.RewardCue:
                     newImage.sprite = RewardCueSprite;
                     break;
                 case SpriteTypes.PunishmentCue:
                     newImage.sprite = PunishmentCueSprite;
                     break;
-                default:
+	            case SpriteTypes.RewardNonIncentive:
+		            newImage.sprite = RewardNonIncentiveSprite;
+					break;
+	            case SpriteTypes.PunishmentNonIncentive:
+		            newImage.sprite = PunishmentNonIncentiveSprite;
+					break;
+	            default:
                     throw new ArgumentOutOfRangeException(nameof(spriteType), spriteType, null);
             }
             newObj.GetComponent<RectTransform>().SetParent(panel.transform);

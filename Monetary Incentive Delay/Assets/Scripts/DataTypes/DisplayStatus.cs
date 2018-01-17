@@ -1,4 +1,4 @@
-﻿namespace DataTypes
+﻿namespace Assets.Scripts.DataTypes
 {
     public enum DisplayStatus
     {

@@ -1,12 +1,14 @@
-﻿namespace DataTypes
+﻿namespace Assets.Scripts.DataTypes
 {
 	public enum SpriteTypes
 	{
 		Baseline,
-		NonIncentive,
 		Target,
 		ControlCue,
+		ControlNonIncentive,
 		RewardCue,
-		PunishmentCue
+		RewardNonIncentive,
+		PunishmentCue,
+		PunishmentNonIncentive
 	}
 }
