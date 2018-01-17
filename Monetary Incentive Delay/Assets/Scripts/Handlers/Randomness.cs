@@ -4,9 +4,9 @@ namespace Assets.Scripts.Handlers
 {
 	public static class Randomness
 	{
-		private static Random _rand  = new Random();
+		private static readonly Random _rand  = new Random();
 
-		public static int[] RandomizeField(int fieldSize, int percentageOfZeroes)
+		public static int[] RandomizeField(int fieldSize, float percentageOfZeroes)
 		{
 			int[] randomField = new int[fieldSize];
 			for (int i = 0; i < fieldSize * (1 - percentageOfZeroes); i++)

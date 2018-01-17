@@ -185,9 +185,6 @@ namespace Assets.Scripts.Classes
 
 		private void RemoveSprite()
 		{
-#if UNITY_EDITOR
-			Debug.Log(_baselineSettings.NumberOfTasks);
-#endif
 			SpriteHandler.Sh.DestroySprite(_sprite);
 			_currentDisplayStatus =
 				_iter < _baselineSettings.NumberOfTasks - 1 ? DisplayStatus.WaitToDisplaySprite : DisplayStatus.DisplayResults;

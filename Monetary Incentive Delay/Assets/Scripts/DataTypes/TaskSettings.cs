@@ -25,18 +25,18 @@ namespace Assets.Scripts.DataTypes
 			{
 				case TaskType.Control:
 					NonIncentivePercentage = nonIncentivePercentage < 0 ? 0.8f : nonIncentivePercentage;
-					IncentiveOrder = new SpriteTypes[]{SpriteTypes.ControlCue, SpriteTypes.Target};
-					NonIncentiveOrder = new SpriteTypes[]{SpriteTypes.ControlNonIncentive, SpriteTypes.Target};
+					IncentiveOrder = new SpriteTypes[]{SpriteTypes.ControlCue, SpriteTypes.Target, SpriteTypes.Correct};
+					NonIncentiveOrder = new SpriteTypes[]{SpriteTypes.ControlNonIncentive, SpriteTypes.Target, SpriteTypes.Correct};
 					break;
 				case TaskType.Reward:
 					NonIncentivePercentage = nonIncentivePercentage < 0 ? 0.8f : nonIncentivePercentage;
-					IncentiveOrder = new SpriteTypes[]{SpriteTypes.RewardCue, SpriteTypes.Target};
-					NonIncentiveOrder = new SpriteTypes[]{SpriteTypes.RewardNonIncentive, SpriteTypes.Target};
+					IncentiveOrder = new SpriteTypes[]{SpriteTypes.RewardCue, SpriteTypes.Target, SpriteTypes.Correct};
+					NonIncentiveOrder = new SpriteTypes[]{SpriteTypes.RewardNonIncentive, SpriteTypes.Target, SpriteTypes.Correct};
 					break;
 				case TaskType.Punishment:
 					NonIncentivePercentage = nonIncentivePercentage < 0 ? 0.8f : nonIncentivePercentage;
-					IncentiveOrder = new SpriteTypes[]{SpriteTypes.PunishmentCue, SpriteTypes.Target};
-					NonIncentiveOrder = new SpriteTypes[]{SpriteTypes.PunishmentNonIncentive, SpriteTypes.Target};
+					IncentiveOrder = new SpriteTypes[]{SpriteTypes.PunishmentCue, SpriteTypes.Target, SpriteTypes.Correct};
+					NonIncentiveOrder = new SpriteTypes[]{SpriteTypes.PunishmentNonIncentive, SpriteTypes.Target, SpriteTypes.Correct};
 					break;
 				default:
 					throw new ArgumentOutOfRangeException(nameof(task), task, null);

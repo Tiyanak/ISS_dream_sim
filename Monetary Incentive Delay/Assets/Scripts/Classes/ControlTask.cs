@@ -34,6 +34,7 @@ namespace Assets.Scripts.Classes
 		};
 
 		private double[] _reactionTimes;
+		private int[] _taskType;
 		private double _threshold;
 
 		private GameObject _sprite;
@@ -59,6 +60,7 @@ namespace Assets.Scripts.Classes
 
 		private void InitValues()
 		{
+			_taskType = Randomness.RandomizeField(_settings.NumberOfTasks, _settings.NonIncentivePercentage);
 			_reactionTimes = new double[_settings.NumberOfTasks];
 			for (var i = 0; i < _settings.NumberOfTasks; i++)
 				_reactionTimes[i] = -1;
@@ -194,7 +196,10 @@ namespace Assets.Scripts.Classes
 		private void ShowSprite()
 		{
 			_iter++;
-			_sprite = SpriteHandler.Sh.CreateSprite(SpriteTypes.ControlCue, _panel);
+			var spriteType = _taskType[_iter] == 0
+				? _settings.NonIncentiveOrder[_iter / 3]
+				: _settings.IncentiveOrder[_iter / 3];
+			_sprite = SpriteHandler.Sh.CreateSprite(spriteType, _panel);
 			_currentDisplayStatus = DisplayStatus.DisplayingSprite;
 		}
 
@@ -218,6 +223,8 @@ namespace Assets.Scripts.Classes
 			{
 				_spamCounter.Add(TimeHandler.GetMilliseconds());
 			}
+			else if(_spacebarPressed)
+				_passedTime = 100000;
 		}
 
 		private bool DidHeSpam()
