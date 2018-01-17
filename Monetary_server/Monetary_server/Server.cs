@@ -125,7 +125,7 @@ namespace Monetary_server
             switch (reaction.msgType)
             {
                 case 0: // start task
-                    long id = DateTime.Now.Ticks;
+                    long id = GetMilliseconds();
                     Writer writer = new Writer(reaction.taskType + "_" + id.ToString() + ".csv");
                     writer.writeLine(reaction.getFieldsCSV());
                     this.writers[id.ToString()] = writer;
@@ -150,6 +150,14 @@ namespace Monetary_server
                     break;
             }
 
+        }
+
+        public static long GetMilliseconds()
+        {
+            DateTime dt1970 = new DateTime(1970, 1, 1);
+            DateTime current = DateTime.Now;
+            TimeSpan span = current - dt1970;
+            return (long) span.TotalMilliseconds;
         }
 
     }
