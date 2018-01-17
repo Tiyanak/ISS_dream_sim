@@ -13,7 +13,7 @@ namespace Assets.Scripts.Classes
 		private readonly TimeSettings _timeSettings;
 		private DisplayStatus _currentDisplayStatus;
 		private float _passedTime;
-		private readonly int _showSpriteIndex = 3;
+		private const int ShowSpriteIndex = 3;
 		private readonly List<string> _info = new List<string>
 		{
 			"First we need to determine your speed to make this a bit more challenging for you.",
@@ -30,10 +30,11 @@ namespace Assets.Scripts.Classes
 	
 		private int _shownInfoText;
 		private bool _waitForUserInput;
+		private double _reactionTime;
 
 		public UserInfo()
 		{
-			_timeSettings = GlobalSettings.Gs != null ? GlobalSettings.Gs.BaselineSettings.Time : new TimeSettings(new Interval(500, 1000), 200, 1000 );
+			_timeSettings = new TimeSettings(new Interval(500, 1000), 200, 3000);
 		}
 
 		[UsedImplicitly]
@@ -50,6 +51,7 @@ namespace Assets.Scripts.Classes
 		[UsedImplicitly]
 		private void Update() 
 		{
+			CheckKeyboard();
 			_passedTime += Time.deltaTime * 1000;
 		
 			switch (_currentDisplayStatus)
@@ -78,6 +80,15 @@ namespace Assets.Scripts.Classes
 					break;
 				case DisplayStatus.Nothing:
 					break;
+				case DisplayStatus.DisplayResults:
+					DisplayResults();
+					break;
+				case DisplayStatus.GoToMainMenu:
+					if (_passedTime > _timeSettings.InfoDisplayTimeMilliseconds)
+					{
+						GuiHandler.GoToMainMenu();
+					}
+					break;
 				default:
 					throw new ArgumentOutOfRangeException();
 			}	
@@ -87,13 +98,12 @@ namespace Assets.Scripts.Classes
 		{
 			if (_shownInfoText + 1 == _info.Count)
 			{
-				_shownInfoText++;
 				_panelInformation.SetActive(false);
 				PanelSrt.SetActive(true);
 			}
 			else
 			{
-				if (++_shownInfoText == _showSpriteIndex)
+				if (++_shownInfoText == ShowSpriteIndex)
 				{
 					_waitForUserInput = true;
 					_currentDisplayStatus = DisplayStatus.WaitToDisplaySprite;
@@ -105,10 +115,16 @@ namespace Assets.Scripts.Classes
 		private void HandleUserInput()
 		{
 			if (!Input.GetKeyDown("space")) return;
-			_panelInformation.GetComponentInChildren<Text>().text = "Your reaction took " + _passedTime + " miliseconds.";
-			_currentDisplayStatus = DisplayStatus.DisplayingInfo;
+			_reactionTime = _passedTime;
+			_currentDisplayStatus = DisplayStatus.DisplayResults;
 			_waitForUserInput = false;
 			_passedTime = 0;
+		}
+
+		private void DisplayResults()
+		{
+			_panelInformation.GetComponentInChildren<Text>().text = "Your reaction took " + _reactionTime.ToString("#.0") + " miliseconds.";
+			_currentDisplayStatus = DisplayStatus.DisplayingInfo;
 		}
 
 		private void ShowSprite()
@@ -121,6 +137,12 @@ namespace Assets.Scripts.Classes
 		{
 			SpriteHandler.Sh.DestroySprite(_sprite);
 			_currentDisplayStatus = _waitForUserInput ? DisplayStatus.WaitingUserInput : DisplayStatus.DisplayingInfo;
+		}
+
+		private void CheckKeyboard()
+		{
+			if (!Input.GetKeyDown("space") || _waitForUserInput) return;
+			_passedTime = 100000;
 		}
 	}
 }

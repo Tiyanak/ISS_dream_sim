@@ -1,5 +1,4 @@
-﻿using Assets.Scripts.DataTypes;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.SceneManagement;
 
 namespace Assets.Scripts.Handlers
@@ -70,7 +69,7 @@ namespace Assets.Scripts.Handlers
             UnityEditor.EditorApplication.isPlaying = false;
 #else
 			Application.Quit();
-		#endif
+#endif
         }
     }
 }

@@ -3,9 +3,11 @@
     public enum DisplayStatus
     {
         DisplayingInfo,
+        DisplayResults,
         WaitToDisplaySprite,
         DisplayingSprite,
         WaitingUserInput,
-        Nothing
+        Nothing,
+        GoToMainMenu
     }
 }

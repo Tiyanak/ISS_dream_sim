@@ -1,30 +1,57 @@
 ﻿using System;
 using System.Linq;
-using Assets.Scripts.Interfaces;
 
 namespace Assets.Scripts.Handlers
 {
-    public class SrtHandler : ISrt
+    public static class SrtHandler
     {
         private const double Z = 0.255;  // p(X < 0.255) = 60%
-        private double _simpleReactionTime;
 
         /// <summary>
         /// This methond calculates the simple reaction time (SRT)
         /// </summary>
         /// <param name="results"></param>
-        public void SendResults(double[] results)
+        public static double GetAcceptableReationTime(double[] results)
         {
-            double mean = results.Average();
-            double sumOfSquaresOfDifferences = results.Select(val => (val - mean) * (val - mean)).Sum();
-            double stDev = Math.Sqrt(sumOfSquaresOfDifferences / results.Length);
+            double mean = 0;
+            var valid = 0;
+            foreach (double result in results)
+            {
+                if (!(result >= 0)) continue;
+                mean += result;
+                valid++;
+            }
+            if (valid == 0)
+                return double.MaxValue;
+            
+            mean /= valid;
+            
+            double sumOfSquaresOfDifferences = 0;
+            foreach (var result in results)
+            {
+                if (result < 0) continue;
+                sumOfSquaresOfDifferences += Math.Pow(result - mean, 2);
+            }
+            double stDev = Math.Sqrt(sumOfSquaresOfDifferences / valid);
 
-            _simpleReactionTime = Z * stDev + mean;
+            return Z * stDev + mean;
         }
-
-        public double GetSrt()
+        
+        public static double GetMean(double[] results)
         {
-            return _simpleReactionTime;
+            double mean = 0;
+            var valid = 0;
+            foreach (double result in results)
+            {
+                if (!(result >= 0)) continue;
+                mean += result;
+                valid++;
+            }
+            if (valid == 0)
+                return double.MaxValue;
+            
+            mean /= valid;
+            return mean;
         }
     }
 }

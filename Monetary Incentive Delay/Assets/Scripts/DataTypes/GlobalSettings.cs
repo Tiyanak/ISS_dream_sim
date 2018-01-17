@@ -13,6 +13,7 @@ namespace Assets.Scripts.DataTypes
 		public ITaskSettings ControlSettings { get; private set; }
 		public ITaskSettings RewardSettings { get; private set; }
 		public ITaskSettings PunishmentSettings { get; private set; }
+		public double Threshold { get; private set; }
 
 		[UsedImplicitly]
 		private void Awake()
@@ -27,10 +28,10 @@ namespace Assets.Scripts.DataTypes
 
 		public GlobalSettings()
 		{
-			BaselineSettings = new TaskSettings(new TimeSettings(new Interval(500, 1000), 200, 4000), TaskType.Baseline, 30);
-			ControlSettings = new TaskSettings(new TimeSettings(new Interval(2000, 3000), 200, 4000), TaskType.Control, 40, 0.8f);
-			RewardSettings = new TaskSettings(new TimeSettings(new Interval(2000, 3000), 150, 4000), TaskType.Reward, 40, 0.8f);
-			PunishmentSettings = new TaskSettings(new TimeSettings(new Interval(2000, 3000), 150, 4000), TaskType.Punishment, 40, 0.8f);
+			BaselineSettings = new TaskSettings(new TimeSettings(new Interval(1500, 2500), 160, 4000), TaskType.Baseline, 20);
+			ControlSettings = new TaskSettings(new TimeSettings(new Interval(2000, 3000), 160, 4000), TaskType.Control, 20, 0.8f);
+			RewardSettings = new TaskSettings(new TimeSettings(new Interval(2000, 3000), 160, 4000), TaskType.Reward, 20, 0.8f);
+			PunishmentSettings = new TaskSettings(new TimeSettings(new Interval(2000, 3000), 160, 4000), TaskType.Punishment, 20, 0.8f);
 		}
 
 		public void SetSettings(TaskSettings[] allSettings)
@@ -96,5 +97,9 @@ namespace Assets.Scripts.DataTypes
 			PunishmentSettings = newSettings;
 		}
 
+		public void UpdateThreshold(double threshold)
+		{
+			Threshold = threshold;
+		}
 	}
 }
