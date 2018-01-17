@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Assets.Scripts.DataTypes;
 using Assets.Scripts.Handlers;
+using Interfaces;
 using JetBrains.Annotations;
 using UnityEngine;
 using UnityEngine.UI;
@@ -10,7 +11,8 @@ namespace Assets.Scripts.Classes
 {
 	public class UserInfo : MonoBehaviour
 	{
-		private readonly TimeSettings _timeSettings;
+		private readonly int _infoTimeSetting;
+		private ISpriteTime _timeSettings;
 		private DisplayStatus _currentDisplayStatus;
 		private float _passedTime;
 		private const int ShowSpriteIndex = 3;
@@ -34,13 +36,16 @@ namespace Assets.Scripts.Classes
 
 		public UserInfo()
 		{
-			_timeSettings = new TimeSettings(new Interval(500, 1000), 200, 3000);
+			_infoTimeSetting = 4000;
 		}
 
 		[UsedImplicitly]
 		private void Start()
 		{
 			_panelInformation = gameObject;
+			_timeSettings = GlobalSettings.Gs != null
+				? GlobalSettings.Gs.SpriteSettings.GetTimeSettings(SpriteTypes.Baseline)
+				: new SpriteTime(new Interval(600, 1000), new Interval(200, 210), SpriteTypes.Baseline);
 			_currentDisplayStatus = DisplayStatus.DisplayingInfo;
 			_passedTime = 0;
 			_shownInfoText = 0;
@@ -57,21 +62,21 @@ namespace Assets.Scripts.Classes
 			switch (_currentDisplayStatus)
 			{
 				case DisplayStatus.DisplayingInfo:
-					if (_passedTime > _timeSettings.InfoDisplayTimeMilliseconds)
+					if (_passedTime > _infoTimeSetting)
 					{
 						ChangeText();
 						_passedTime = 0;
 					}
 					break;
 				case DisplayStatus.WaitToDisplaySprite:
-					if (_passedTime > _timeSettings.SpriteDelayTimeMilliseconds)
+					if (_passedTime > _timeSettings.SpriteDisplayTime)
 					{
 						ShowSprite();
 						_passedTime = 0;
 					}
 					break;
 				case DisplayStatus.DisplayingSprite:
-					if (_passedTime > _timeSettings.SpriteDisplayTimeMilliseconds)
+					if (_passedTime > _timeSettings.SpriteDisplayTime)
 						RemoveSprite();
 					HandleUserInput();
 					break;
@@ -84,7 +89,7 @@ namespace Assets.Scripts.Classes
 					DisplayResults();
 					break;
 				case DisplayStatus.GoToMainMenu:
-					if (_passedTime > _timeSettings.InfoDisplayTimeMilliseconds)
+					if (_passedTime > _infoTimeSetting)
 					{
 						GuiHandler.GoToMainMenu();
 					}

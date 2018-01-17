@@ -6,14 +6,16 @@ namespace Assets.Scripts.DataTypes
 {
 	public class TaskSettings : ITaskSettings
 	{
-		public TimeSettings Time { get; private set; }
+		public int InfoTime { get; private set; }
 		public TaskType Task { get; }
 		public int NumberOfTasks { get; private set; }
 		public float NonIncentivePercentage { get; private set; }
+		public SpriteTypes[] IncentiveOrder { get; }
+		public SpriteTypes[] NonIncentiveOrder { get; }
 
-		public TaskSettings(TimeSettings time, TaskType task, int taskNumber, float nonIncentivePercentage = -1)
+		public TaskSettings(int infoTime, TaskType task, int taskNumber, float nonIncentivePercentage = -1)
 		{
-			Time = time;
+			InfoTime = infoTime;
 			Task = task;
 			NumberOfTasks = taskNumber;
 			if (nonIncentivePercentage >= 0)
@@ -21,26 +23,29 @@ namespace Assets.Scripts.DataTypes
 
 			switch (task)
 			{
-				case TaskType.Baseline:
-					NonIncentivePercentage = nonIncentivePercentage < 0 ? 0 : nonIncentivePercentage;
-					break;
 				case TaskType.Control:
 					NonIncentivePercentage = nonIncentivePercentage < 0 ? 0.8f : nonIncentivePercentage;
+					IncentiveOrder = new SpriteTypes[]{SpriteTypes.ControlCue, SpriteTypes.Target};
+					NonIncentiveOrder = new SpriteTypes[]{SpriteTypes.ControlNonIncentive, SpriteTypes.Target};
 					break;
 				case TaskType.Reward:
 					NonIncentivePercentage = nonIncentivePercentage < 0 ? 0.8f : nonIncentivePercentage;
+					IncentiveOrder = new SpriteTypes[]{SpriteTypes.RewardCue, SpriteTypes.Target};
+					NonIncentiveOrder = new SpriteTypes[]{SpriteTypes.RewardNonIncentive, SpriteTypes.Target};
 					break;
 				case TaskType.Punishment:
 					NonIncentivePercentage = nonIncentivePercentage < 0 ? 0.8f : nonIncentivePercentage;
+					IncentiveOrder = new SpriteTypes[]{SpriteTypes.PunishmentCue, SpriteTypes.Target};
+					NonIncentiveOrder = new SpriteTypes[]{SpriteTypes.PunishmentNonIncentive, SpriteTypes.Target};
 					break;
 				default:
 					throw new ArgumentOutOfRangeException(nameof(task), task, null);
 			}
 		}
-
-		public void SetTimeSettings(TimeSettings time)
+		
+		public void SetInfoTime(int newTime)
 		{
-			Time = time;
+			InfoTime = newTime;
 		}
 
 		public void SetNumberOfTasks(int newNumber)

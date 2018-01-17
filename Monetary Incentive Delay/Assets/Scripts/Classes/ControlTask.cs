@@ -7,66 +7,66 @@ using Interfaces;
 using JetBrains.Annotations;
 using UnityEngine;
 using UnityEngine.UI;
+using Random = System.Random;
 
 namespace Assets.Scripts.Classes
 {
-	public class Baseline : MonoBehaviour
+	public class ControlTask : MonoBehaviour
 	{
-		private IBaselineSettings _baselineSettings;
-		private ISpriteTime _timeSettings;
-		private int _infoDisplayTime;
+		private ITaskSettings _settings;
 		private DisplayStatus _currentDisplayStatus;
 		private float _passedTime;
-		private const int ShowSpriteIndex = 4;
+		private const int ShowSpriteIndex = 8;
+		private const int WaitUserSpacebar = 7;
 
 		private readonly List<string> _info = new List<string>
 		{
-			"3",
-			"2",
-			"1",
-			"Begin",
+			"You have arrived at control task.",
+			"Here you won't gain nor lose any money.",
+			"Your reaction time shall be recorded.",
+			"There are two different cues representing two different trials.",
+			"This box represents incentive cue, i.e. important",
+			"This box represents nonincentive cue, i.e. not important",
+			"After these cues you may expect a target box to apprear.",
+			"Press space to begin",
 			"",
-			"And now onto the real thing."
+			"Great. Now onto the next task."
 		};
 
 		private double[] _reactionTimes;
-		private double _threshold = -1;
+		private double _threshold;
 
 		private GameObject _sprite;
-		private GameObject _panelSrt;
+		private GameObject _panel;
+		public GameObject RewardPanel;
+		public GameObject PunishmentPanel;
 
 		private int _shownInfoText;
 		private int _iter;
 		private List<double> _spamCounter;
+		private bool _spacebarPressed;
 
 		[UsedImplicitly]
 		private void Start()
 		{
-			const int numberOfTasks = 10;
-			const int infoDisplayTime = 3000;
-			
-			_panelSrt = gameObject;
-			// Try to load global settings, if not then define your own
-			_baselineSettings = GlobalSettings.Gs != null
-				? GlobalSettings.Gs.BaselineSettings
-				: new BaselineSettings(infoDisplayTime, numberOfTasks);
-			_timeSettings = GlobalSettings.Gs != null
-				? GlobalSettings.Gs.SpriteSettings.GetTimeSettings(SpriteTypes.Baseline)
-				: new SpriteTime(new Interval(1000, 2000),new Interval(180, 200),  SpriteTypes.Baseline);
+			_panel = gameObject;
+			_settings = GlobalSettings.Gs != null
+				? GlobalSettings.Gs.ControlSettings
+				: new TaskSettings(2000, TaskType.Control, 20);
+			_threshold = GlobalSettings.Gs != null ? GlobalSettings.Gs.Threshold : 300;
 			InitValues();
 		}
 
 		private void InitValues()
 		{
-			_infoDisplayTime = 1000;
-			_reactionTimes = new double[_baselineSettings.NumberOfTasks];
-			for (var i = 0; i < _baselineSettings.NumberOfTasks; i++)
+			_reactionTimes = new double[_settings.NumberOfTasks];
+			for (var i = 0; i < _settings.NumberOfTasks; i++)
 				_reactionTimes[i] = -1;
 			_spamCounter = new List<double> {DateTime.Now.Millisecond};
 			_currentDisplayStatus = DisplayStatus.DisplayingInfo;
 			_passedTime = 0;
 			_shownInfoText = 0;
-			_panelSrt.GetComponentInChildren<Text>().text = _info[_shownInfoText];
+			_panel.GetComponentInChildren<Text>().text = _info[_shownInfoText];
 			_iter = -1;
 		}
 
@@ -80,7 +80,7 @@ namespace Assets.Scripts.Classes
 			switch (_currentDisplayStatus)
 			{
 				case DisplayStatus.DisplayingInfo:
-					if (_passedTime > _infoDisplayTime)
+					if (_passedTime > _settings.InfoTime)
 					{
 						ChangeText();
 						_passedTime = 0;
@@ -91,24 +91,28 @@ namespace Assets.Scripts.Classes
 					break;
 				case DisplayStatus.WaitToDisplaySprite:
 					HandleUserInput();
-					if (_passedTime > _timeSettings.SpriteDelayTime)
+					if (_passedTime > _settings.InfoTime)
 					{
 						ShowSprite();
 						_passedTime = 0;
 					}
 					break;
 				case DisplayStatus.DisplayingSprite:
-					if (_passedTime > _timeSettings.SpriteDisplayTime)
+					if (_passedTime > _settings.InfoTime)
 						RemoveSprite();
 					HandleUserInput();
 					break;
 				case DisplayStatus.WaitingUserInput:
-					HandleUserInput();
+					if (_spacebarPressed)
+					{
+						_currentDisplayStatus = DisplayStatus.DisplayingInfo;
+						_passedTime = 0;
+					}
 					break;
 				case DisplayStatus.Nothing:
 					break;
 				case DisplayStatus.GoToMainMenu:
-					if (_passedTime > _infoDisplayTime)
+					if (_passedTime > _settings.InfoTime)
 					{
 						GuiHandler.GoToMainMenu();
 					}
@@ -122,22 +126,33 @@ namespace Assets.Scripts.Classes
 		{
 			if (_shownInfoText + 1 == _info.Count)
 			{
-				GuiHandler.GoToTests();
+				_panel.SetActive(false);
+				var rand = new Random();
+				if(rand.NextDouble() < 0.5)
+					PunishmentPanel.SetActive(true);
+				else
+					RewardPanel.SetActive(true);
 			}
 			else
 			{
-				if (++_shownInfoText == ShowSpriteIndex)
+				_shownInfoText++;
+				switch (_shownInfoText)
 				{
-					_currentDisplayStatus = DisplayStatus.WaitToDisplaySprite;
+					case ShowSpriteIndex:
+						_currentDisplayStatus = DisplayStatus.WaitToDisplaySprite;
+						break;
+					case WaitUserSpacebar:
+						_currentDisplayStatus = DisplayStatus.WaitingUserInput;
+						break;
 				}
-				_panelSrt.GetComponentInChildren<Text>().text = _info[_shownInfoText];
+				_panel.GetComponentInChildren<Text>().text = _info[_shownInfoText];
 			}
 		}
 
 		private void DisplayInfo()
 		{
 			bool mainMenu = false;
-			_infoDisplayTime = _baselineSettings.InfoDisplayTime;
+			_settings.SetInfoTime(3000);
 			double mean = SrtHandler.GetMean(_reactionTimes);
 #if UNITY_EDITOR
 			Debug.Log("mean time: " + mean);
@@ -163,7 +178,7 @@ namespace Assets.Scripts.Classes
 				mainMenu = true;
 			}
 
-			_panelSrt.GetComponentInChildren<Text>().text = performance;
+			_panel.GetComponentInChildren<Text>().text = performance;
 			GlobalSettings.Gs?.UpdateThreshold(_threshold);
 			_passedTime = 0;
 			_currentDisplayStatus = mainMenu ? DisplayStatus.GoToMainMenu : DisplayStatus.DisplayingInfo;
@@ -171,7 +186,7 @@ namespace Assets.Scripts.Classes
 
 		private void HandleUserInput()
 		{
-			if (!Input.GetKeyDown("space")) return;
+			if (!_spacebarPressed) return;
 			if (_reactionTimes[_iter] < 0)
 				_reactionTimes[_iter] = _passedTime;
 		}
@@ -179,24 +194,30 @@ namespace Assets.Scripts.Classes
 		private void ShowSprite()
 		{
 			_iter++;
-			_sprite = SpriteHandler.Sh.CreateSprite(SpriteTypes.Baseline, _panelSrt);
+			_sprite = SpriteHandler.Sh.CreateSprite(SpriteTypes.ControlCue, _panel);
 			_currentDisplayStatus = DisplayStatus.DisplayingSprite;
 		}
 
 		private void RemoveSprite()
 		{
-#if UNITY_EDITOR
-			Debug.Log(_baselineSettings.NumberOfTasks);
-#endif
 			SpriteHandler.Sh.DestroySprite(_sprite);
 			_currentDisplayStatus =
-				_iter < _baselineSettings.NumberOfTasks - 1 ? DisplayStatus.WaitToDisplaySprite : DisplayStatus.DisplayResults;
+				_iter < _settings.NumberOfTasks - 1 ? DisplayStatus.WaitToDisplaySprite : DisplayStatus.DisplayResults;
+		}
+
+		private void CheckIfSpacebarPressed()
+		{
+			_spacebarPressed = Input.GetKeyDown("space");
 		}
 
 		private void CheckForSpamming()
 		{
-			if (!Input.GetKeyDown("space")) return;
-			_spamCounter.Add(TimeHandler.GetMilliseconds());
+			CheckIfSpacebarPressed();
+			if (_spacebarPressed && (_currentDisplayStatus == DisplayStatus.DisplayingSprite ||
+			                                  _currentDisplayStatus == DisplayStatus.WaitToDisplaySprite))
+			{
+				_spamCounter.Add(TimeHandler.GetMilliseconds());
+			}
 		}
 
 		private bool DidHeSpam()
@@ -207,8 +228,8 @@ namespace Assets.Scripts.Classes
 				if (_spamCounter[i] - _spamCounter[i - 1] < 200)
 					littleTime++;
 			}
-			double percentage = (double) littleTime / _baselineSettings.NumberOfTasks;
-			return _spamCounter.Count > 2 * _baselineSettings.NumberOfTasks || percentage > 0.3;
+			double percentage = (double) littleTime / _settings.NumberOfTasks;
+			return _spamCounter.Count > 2 * _settings.NumberOfTasks || percentage > 0.3;
 		}
 	}
 }

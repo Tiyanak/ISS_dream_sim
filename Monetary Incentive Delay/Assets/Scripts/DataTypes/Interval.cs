@@ -17,7 +17,7 @@ namespace Assets.Scripts.DataTypes
 
 		public int GetTime()
 		{
-			return rand.Next(_minTime, _maxTime + 1);
+			return rand.Next(_minTime, _maxTime);
 		}
 	}
 }

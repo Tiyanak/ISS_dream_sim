@@ -2,6 +2,8 @@
 {
 	public enum SpriteTypes
 	{
+		Correct,
+		Incorrect,
 		Baseline,
 		Target,
 		ControlCue,

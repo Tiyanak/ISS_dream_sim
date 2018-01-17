@@ -10,6 +10,8 @@ namespace Assets.Scripts.Handlers
     {
         public static SpriteHandler Sh;
         
+        public Sprite CorrectSprite;
+        public Sprite IncorrectSprite;
         public Sprite BaselineSprite;
         public Sprite TargetSprite;
         public Sprite ControlCueSprite;
@@ -18,7 +20,7 @@ namespace Assets.Scripts.Handlers
 	    public Sprite RewardNonIncentiveSprite;
 		public Sprite PunishmentCueSprite;
 	    public Sprite PunishmentNonIncentiveSprite;
-
+        
 	    [UsedImplicitly]
 		private void Awake()
         {
@@ -61,7 +63,13 @@ namespace Assets.Scripts.Handlers
 	            case SpriteTypes.PunishmentNonIncentive:
 		            newImage.sprite = PunishmentNonIncentiveSprite;
 					break;
-	            default:
+                case SpriteTypes.Correct:
+                    newImage.sprite = CorrectSprite;
+                    break;
+                case SpriteTypes.Incorrect:
+                    newImage.sprite = IncorrectSprite;
+                    break;
+                default:
                     throw new ArgumentOutOfRangeException(nameof(spriteType), spriteType, null);
             }
             newObj.GetComponent<RectTransform>().SetParent(panel.transform);

@@ -9,17 +9,17 @@ Prefab:
     m_Modifications: []
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 0}
-  m_RootGameObject: {fileID: 1573413515099988}
+  m_RootGameObject: {fileID: 1389002449266456}
   m_IsPrefabParent: 1
---- !u!1 &1573413515099988
+--- !u!1 &1389002449266456
 GameObject:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   serializedVersion: 5
   m_Component:
-  - component: {fileID: 4821739033205924}
-  - component: {fileID: 114301760166683842}
+  - component: {fileID: 4402647633490794}
+  - component: {fileID: 114261181788516966}
   m_Layer: 0
   m_Name: SpriteHandler
   m_TagString: Untagged
@@ -27,34 +27,41 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &4821739033205924
+--- !u!4 &4402647633490794
 Transform:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1573413515099988}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_GameObject: {fileID: 1389002449266456}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &114301760166683842
+--- !u!114 &114261181788516966
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1573413515099988}
+  m_GameObject: {fileID: 1389002449266456}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 0a0984faad2a47aeb0728dc05c675bd0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  CorrectSprite: {fileID: 21300000, guid: ada119e271f7e5e439aed6c72327d6e5, type: 3}
+  IncorrectSprite: {fileID: 21300000, guid: 84db0d851a4089440b92e16d8877bbbe, type: 3}
   BaselineSprite: {fileID: 21300000, guid: a82f1a441973f43f88c731abf1673368, type: 3}
-  NonIncentiveSprite: {fileID: 21300000, guid: a82f1a441973f43f88c731abf1673368, type: 3}
-  TargetSprite: {fileID: 21300000, guid: a82f1a441973f43f88c731abf1673368, type: 3}
-  ControlCueSprite: {fileID: 21300000, guid: a82f1a441973f43f88c731abf1673368, type: 3}
+  TargetSprite: {fileID: 21300000, guid: fb0cee9721083da43a75ce1e1466fd12, type: 3}
+  ControlCueSprite: {fileID: 21300000, guid: ec7bde31c9ea2ee4a9cc56f909d73079, type: 3}
+  ControlNonIncentiveSprite: {fileID: 21300000, guid: 650bca618a6051c43a5ea96293c64a0b,
+    type: 3}
   RewardCueSprite: {fileID: 21300000, guid: a82f1a441973f43f88c731abf1673368, type: 3}
-  PunishmentCueSprite: {fileID: 21300000, guid: a82f1a441973f43f88c731abf1673368,
+  RewardNonIncentiveSprite: {fileID: 21300000, guid: 9a24534d3ab1bc54db9a2133e5474e12,
+    type: 3}
+  PunishmentCueSprite: {fileID: 21300000, guid: 6b8c41718ad036143963bdd4a6de7021,
+    type: 3}
+  PunishmentNonIncentiveSprite: {fileID: 21300000, guid: ee007a8660f415042a769cab854ca56b,
     type: 3}

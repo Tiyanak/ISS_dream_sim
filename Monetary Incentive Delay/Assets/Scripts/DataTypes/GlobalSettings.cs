@@ -9,11 +9,12 @@ namespace Assets.Scripts.DataTypes
 	{
 		public static GlobalSettings Gs;
 
-		public ITaskSettings BaselineSettings { get; private set; }
+		public IBaselineSettings BaselineSettings { get; private set; }
 		public ITaskSettings ControlSettings { get; private set; }
 		public ITaskSettings RewardSettings { get; private set; }
 		public ITaskSettings PunishmentSettings { get; private set; }
 		public double Threshold { get; private set; }
+		public ISpriteSettings SpriteSettings { get; private set; }
 
 		[UsedImplicitly]
 		private void Awake()
@@ -28,10 +29,12 @@ namespace Assets.Scripts.DataTypes
 
 		public GlobalSettings()
 		{
-			BaselineSettings = new TaskSettings(new TimeSettings(new Interval(1500, 2500), 160, 4000), TaskType.Baseline, 20);
-			ControlSettings = new TaskSettings(new TimeSettings(new Interval(2000, 3000), 160, 4000), TaskType.Control, 20, 0.8f);
-			RewardSettings = new TaskSettings(new TimeSettings(new Interval(2000, 3000), 160, 4000), TaskType.Reward, 20, 0.8f);
-			PunishmentSettings = new TaskSettings(new TimeSettings(new Interval(2000, 3000), 160, 4000), TaskType.Punishment, 20, 0.8f);
+			const int numberOfTasks = 20;
+			BaselineSettings = new BaselineSettings(3000, 10);
+			ControlSettings = new TaskSettings(3000, TaskType.Control, numberOfTasks, 0.8f);
+			RewardSettings = new TaskSettings(3000, TaskType.Reward, numberOfTasks, 0.8f);
+			PunishmentSettings = new TaskSettings(3000, TaskType.Punishment, numberOfTasks, 0.8f);
+			SpriteSettings = new SpriteSettings();
 		}
 
 		public void SetSettings(TaskSettings[] allSettings)
@@ -42,9 +45,6 @@ namespace Assets.Scripts.DataTypes
 					continue;
 				switch (t.Task)
 				{
-					case TaskType.Baseline:
-						BaselineSettings = t;
-						break;
 					case TaskType.Control:
 						ControlSettings = t;
 						break;
@@ -64,8 +64,6 @@ namespace Assets.Scripts.DataTypes
 		{
 			switch (type)
 			{
-				case TaskType.Baseline:
-					return BaselineSettings;
 				case TaskType.Control:
 					return ControlSettings;
 				case TaskType.Reward:
@@ -76,8 +74,13 @@ namespace Assets.Scripts.DataTypes
 					throw new ArgumentOutOfRangeException(nameof(type), type, null);
 			}
 		}
+		
+		public void SetSpriteSettings(ISpriteSettings newSettings)
+		{
+			SpriteSettings = newSettings;
+		}
 
-		public void UpdateBaselineSettings(ITaskSettings newSettings)
+		public void UpdateBaselineSettings(IBaselineSettings newSettings)
 		{
 			BaselineSettings = newSettings;
 		}
