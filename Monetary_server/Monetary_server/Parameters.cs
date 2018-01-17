@@ -11,15 +11,18 @@ namespace Monetary_server
     [Serializable]
     public class Parameters
     {
-
+        public long taskId;
+        public int msgType;
         public double targetDisplayTime;
         public double cueToTargetTime;
         public double threshold;
 
         public Parameters() { }
 
-        public Parameters(double targetDisplayTime, double cueToTargetTime, double threshold)
+        public Parameters(long taskId, int msgType, double targetDisplayTime, double cueToTargetTime, double threshold)
         {
+            this.taskId = taskId;
+            this.msgType = msgType;
             this.targetDisplayTime = targetDisplayTime;
             this.cueToTargetTime = cueToTargetTime;
             this.threshold = threshold;
@@ -29,6 +32,8 @@ namespace Monetary_server
         {
             Parameters des = (Parameters)this.deserialize(serializedData);
 
+            this.taskId = des.taskId;
+            this.msgType = des.msgType;
             this.targetDisplayTime = des.targetDisplayTime;
             this.cueToTargetTime = des.cueToTargetTime;
             this.threshold = des.threshold;
@@ -63,10 +68,14 @@ namespace Monetary_server
 
         public override string ToString()
         {
-            return "TargetDisplayTime: " + this.targetDisplayTime.ToString() +
-            "; CueToTargetTime: " + this.cueToTargetTime.ToString() +
-            "; Threshold: " + this.threshold.ToString();
+            return "TaskId: " + this.taskId.ToString() +
+                "; MsgType: " + this.msgType.ToString() + 
+                "; TargetDisplayTime: " + this.targetDisplayTime.ToString() +
+                "; CueToTargetTime: " + this.cueToTargetTime.ToString() +
+                "; Threshold: " + this.threshold.ToString();
         }
+
+
 
     }
 }

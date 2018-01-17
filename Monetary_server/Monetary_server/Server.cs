@@ -17,10 +17,11 @@ namespace Monetary_server
         NetServer server;
         NetIncomingMessage msg;
         int port = 11111;
-        Writer writer;
+        private Dictionary<string, Writer> writers;
 
         public Server()
         {
+            this.writers = new Dictionary<string, Writer>();
             this.config = new NetPeerConfiguration("MonetaryTest") { Port = this.port };
             this.server = new NetServer(this.config);
         }
@@ -62,13 +63,13 @@ namespace Monetary_server
                             try
                             {
                                 Reaction r = new Reaction(data);
+                                HandleReaction(r, clientConnection);
                                 data = r.ToString();
                             } catch (Exception e)
                             {
                                 Console.WriteLine("Cant deserialize that.");
                             }
 
-                            // writer.writeLine(data); // this is example code for write to file
                             Console.WriteLine("Received msg: " + data);
                            
                             break;
@@ -80,8 +81,7 @@ namespace Monetary_server
                                 case NetConnectionStatus.Connected:
 
                                     string clientConnectedId = msg.SenderConnection.RemoteUniqueIdentifier.ToString();
-                                    string hailMessage = msg.SenderConnection.RemoteHailMessage.ReadString();
-                                    writer = new Writer();
+                                    string hailMessage = msg.SenderConnection.RemoteHailMessage.ReadString();                   
 
                                     Console.WriteLine("Client connected: " + clientConnectedId + " : " + hailMessage);
 
@@ -91,7 +91,6 @@ namespace Monetary_server
 
                                     string clientDisconnectedId = msg.SenderConnection.RemoteUniqueIdentifier.ToString();
                                     string goodByeMsg = msg.ReadString();
-                                    this.writer.closeFile();
 
                                     Console.WriteLine("Client disconnected: " + clientDisconnectedId + " : " + goodByeMsg);
 
@@ -118,6 +117,39 @@ namespace Monetary_server
             {
                 NetSendResult sendResult = this.server.SendMessage(outMsg, clientConnection, NetDeliveryMethod.ReliableOrdered);               
             }            
+        }
+
+        private void HandleReaction(Reaction reaction, NetConnection clientConnection)
+        {
+
+            switch (reaction.msgType)
+            {
+                case 0: // start task
+                    long id = DateTime.Now.Ticks;
+                    Writer writer = new Writer(reaction.taskType + "_" + id.ToString() + ".csv");
+                    writer.writeLine(reaction.getFieldsCSV());
+                    this.writers[id.ToString()] = writer;
+                    break;
+
+                case 1: // end task
+                    this.writers[reaction.taskId.ToString()].closeFile();
+                    break;
+
+                case 2: // reaction msg
+                    this.writers[reaction.taskId.ToString()].writeLine(reaction.toCSV());
+                    // izracun parametara iz reakcije igraca sa strane klijenta
+                    double targetDisplayTime = 0;
+                    double cueToTargetTime = 0;
+                    double threshold = 0;
+                    SendMsg(new Parameters(reaction.taskId, 2, targetDisplayTime, cueToTargetTime, threshold).serialize(), clientConnection);
+
+                    break;
+
+                default:
+                    Console.WriteLine("Reaction message: ", reaction.ToString());
+                    break;
+            }
+
         }
 
     }
