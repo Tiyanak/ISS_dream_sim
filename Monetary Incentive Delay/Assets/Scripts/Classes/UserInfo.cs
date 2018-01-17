@@ -33,7 +33,7 @@ namespace Assets.Scripts.Classes
 
 		public UserInfo()
 		{
-			_timeSettings = new TimeSettings(new Interval(500, 1000), 2000, 1000);
+			_timeSettings = GlobalSettings.Gs != null ? GlobalSettings.Gs.BaselineSettings.Time : new TimeSettings(new Interval(500, 1000), 200, 1000 );
 		}
 
 		[UsedImplicitly]

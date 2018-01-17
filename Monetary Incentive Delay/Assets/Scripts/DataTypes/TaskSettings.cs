@@ -1,9 +1,10 @@
 ﻿using System;
+using Interfaces;
 using UnityEngine;
 
 namespace Assets.Scripts.DataTypes
 {
-	public class TaskSettings
+	public class TaskSettings : ITaskSettings
 	{
 		public TimeSettings Time { get; private set; }
 		public TaskType Task { get; }

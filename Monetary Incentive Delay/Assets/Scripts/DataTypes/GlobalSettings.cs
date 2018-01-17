@@ -1,4 +1,5 @@
 ﻿using System;
+using Interfaces;
 using JetBrains.Annotations;
 using UnityEngine;
 
@@ -8,10 +9,10 @@ namespace Assets.Scripts.DataTypes
 	{
 		public static GlobalSettings Gs;
 
-		public TaskSettings BaselineSettings { get; private set; }
-		public TaskSettings ControlSettings { get; private set; }
-		public TaskSettings RewardSettings { get; private set; }
-		public TaskSettings PunishmentSettings { get; private set; }
+		public ITaskSettings BaselineSettings { get; private set; }
+		public ITaskSettings ControlSettings { get; private set; }
+		public ITaskSettings RewardSettings { get; private set; }
+		public ITaskSettings PunishmentSettings { get; private set; }
 
 		[UsedImplicitly]
 		private void Awake()
@@ -34,7 +35,7 @@ namespace Assets.Scripts.DataTypes
 
 		public void SetSettings(TaskSettings[] allSettings)
 		{
-			foreach (TaskSettings t in allSettings)
+			foreach (ITaskSettings t in allSettings)
 			{
 				if(t == null)
 					continue;
@@ -58,22 +59,39 @@ namespace Assets.Scripts.DataTypes
 			}
 		}
 
-		public void UpdateBaselineSettings(TaskSettings newSettings)
+		public ITaskSettings GetSettings(TaskType type)
+		{
+			switch (type)
+			{
+				case TaskType.Baseline:
+					return BaselineSettings;
+				case TaskType.Control:
+					return ControlSettings;
+				case TaskType.Reward:
+					return RewardSettings;
+				case TaskType.Punishment:
+					return PunishmentSettings;
+				default:
+					throw new ArgumentOutOfRangeException(nameof(type), type, null);
+			}
+		}
+
+		public void UpdateBaselineSettings(ITaskSettings newSettings)
 		{
 			BaselineSettings = newSettings;
 		}
 
-		public void UpdateControlSettings(TaskSettings newSettings)
+		public void UpdateControlSettings(ITaskSettings newSettings)
 		{
 			ControlSettings = newSettings;
 		}
 
-		public void UpdateRewardsSettings(TaskSettings newSettings)
+		public void UpdateRewardsSettings(ITaskSettings newSettings)
 		{
 			RewardSettings = newSettings;
 		}
 
-		public void UpdatePunishmentSettings(TaskSettings newSettings)
+		public void UpdatePunishmentSettings(ITaskSettings newSettings)
 		{
 			PunishmentSettings = newSettings;
 		}

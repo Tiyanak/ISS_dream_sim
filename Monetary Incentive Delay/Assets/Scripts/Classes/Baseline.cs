@@ -31,7 +31,8 @@ namespace Assets.Scripts.Classes
 
 		public Baseline()
 		{
-			_timeSettings = new TimeSettings(new Interval(500,750), 150, 1000);
+			_timeSettings = GlobalSettings.Gs != null ? GlobalSettings.Gs.BaselineSettings.Time : new TimeSettings(new Interval(500,750), 150, 1000);
+			
 		}
 
 		[UsedImplicitly]

@@ -7,7 +7,8 @@ namespace Assets.Scripts
 {
 	public class UnityClient : MonoBehaviour
 	{
-
+		public static UnityClient Communicator;
+		
 		public int Counter;
 
 		Client _client;
@@ -15,6 +16,17 @@ namespace Assets.Scripts
 		public UnityClient()
 		{
 			Counter = 0;
+		}
+		
+		[UsedImplicitly]
+		private void Awake()
+		{
+			if (Communicator != null)
+				Destroy(Communicator);
+			else
+				Communicator = this;
+
+			DontDestroyOnLoad(this);
 		}
 
 		[UsedImplicitly]
