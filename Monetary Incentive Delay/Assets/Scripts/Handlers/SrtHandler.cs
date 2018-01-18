@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq;
 
 namespace Assets.Scripts.Handlers
 {
@@ -15,9 +14,9 @@ namespace Assets.Scripts.Handlers
         {
             double mean = 0;
             var valid = 0;
-            foreach (double result in results)
+            foreach (var result in results)
             {
-                if (!(result >= 0)) continue;
+                if (result < 0) continue;
                 mean += result;
                 valid++;
             }
@@ -41,9 +40,9 @@ namespace Assets.Scripts.Handlers
         {
             double mean = 0;
             var valid = 0;
-            foreach (double result in results)
+            foreach (var result in results)
             {
-                if (!(result >= 0)) continue;
+                if (result < 0) continue;
                 mean += result;
                 valid++;
             }

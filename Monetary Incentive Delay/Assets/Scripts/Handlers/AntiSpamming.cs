@@ -2,14 +2,17 @@
 using Assets.Scripts.DataTypes;
 using UnityEngine;
 
-namespace Handlers
+namespace Assets.Scripts.Handlers
 {
     public static class AntiSpamming
     {
         private static List<double> _spamCounter = new List<double>();
+		private static bool _resetFlag;
 
         public static bool CheckForSpamming(DisplayStatus currentDisplayStatus)
         {
+	        if (_resetFlag)
+		        Clear();
             bool spacebarPressed = CheckIfSpacebarPressed();
             if (spacebarPressed && (currentDisplayStatus == DisplayStatus.DisplayingSprite ||
                                      currentDisplayStatus == DisplayStatus.WaitToDisplaySprite))
@@ -21,6 +24,7 @@ namespace Handlers
 
         public static bool DidHeSpam(int numberOfTasks)
         {
+	        _resetFlag = true;
             int littleTime = 0;
             for (int i = 1; i < _spamCounter.Count; i++)
             {			

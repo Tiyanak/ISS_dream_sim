@@ -1,9 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using Assets.Scripts.DataTypes;
 using Assets.Scripts.Handlers;
-using Handlers;
-using Interfaces;
+using Assets.Scripts.Interfaces;
 using JetBrains.Annotations;
 using UnityEngine;
 using UnityEngine.UI;
@@ -15,58 +13,59 @@ namespace Assets.Scripts.Classes
 		private IBaselineSettings _baselineSettings;
 		private ISpriteTime _timeSettings;
 		private int _infoDisplayTime;
+		private readonly IInformationHolder _informationHolder;
 		private DisplayStatus _currentDisplayStatus;
+		private InformationNugget _currentInfo;
+
 		private float _passedTime;
-		private const int ShowSpriteIndex = 4;
-
-		private readonly List<string> _info = new List<string>
-		{
-			"3",
-			"2",
-			"1",
-			"Begin",
-			"",
-			"And now onto the real thing."
-		};
-
 		private double[] _reactionTimes;
 		private double _threshold = -1;
-		private bool _spacebarPressed;
-
+		
 		private GameObject _sprite;
-		private GameObject _panelSrt;
+		private GameObject _panel;
 
-		private int _shownInfoText;
-		private int _iter;
+		private int _iSprite;
+		private bool _spacebarPressed;
+		private bool _allowedSkipping;
+
+		public Baseline()
+		{
+			_informationHolder = new BaselineInformation();
+		}
 
 		[UsedImplicitly]
 		private void Start()
 		{
-			const int numberOfTasks = 10;
-			const int infoDisplayTime = 3000;
-			
-			_panelSrt = gameObject;
-			// Try to load global settings, if not then define your own
-			_baselineSettings = GlobalSettings.Gs != null
-				? GlobalSettings.Gs.BaselineSettings
-				: new BaselineSettings(infoDisplayTime, numberOfTasks);
-			_timeSettings = GlobalSettings.Gs != null
-				? GlobalSettings.Gs.SpriteSettings.GetTimeSettings(SpriteTypes.Baseline)
-				: new SpriteTime(new Interval(1000, 2000),new Interval(180, 200),  SpriteTypes.Baseline);
+			if (GlobalSettings.Gs == null)
+				GuiHandler.GoToMainMenu();
+			else
+			{
+				_baselineSettings = GlobalSettings.Gs.BaselineSettings;
+				_threshold = GlobalSettings.Gs.Threshold;
+				_timeSettings = GlobalSettings.Gs.SpriteSettings.BaselineSpriteSettings;
+				_infoDisplayTime = _baselineSettings.InfoDisplayTime;
+			}
+			_panel = gameObject;
+			GetInformation();
 			InitValues();
+		}
+
+		private void GetInformation()
+		{
+			_informationHolder.Reset();
+			_currentInfo = _informationHolder.GetNextInformation();
+			_currentDisplayStatus = _currentInfo.NextDisplayStatus;
+			_panel.GetComponentInChildren<Text>().text = _currentInfo.InfoText;
+			_allowedSkipping = _currentInfo.Skippable;
 		}
 
 		private void InitValues()
 		{
-			_infoDisplayTime = 1000;
 			_reactionTimes = new double[_baselineSettings.NumberOfTasks];
 			for (var i = 0; i < _baselineSettings.NumberOfTasks; i++)
 				_reactionTimes[i] = -1;
-			_currentDisplayStatus = DisplayStatus.DisplayingInfo;
+			_iSprite = -1;
 			_passedTime = 0;
-			_shownInfoText = 0;
-			_panelSrt.GetComponentInChildren<Text>().text = _info[_shownInfoText];
-			_iter = -1;
 		}
 
 		// Update is called once per frame
@@ -74,24 +73,36 @@ namespace Assets.Scripts.Classes
 		private void Update()
 		{
 			_spacebarPressed = AntiSpamming.CheckForSpamming(_currentDisplayStatus);
+			CheckSkipping();
 			_passedTime += Time.deltaTime * 1000;
 
 			switch (_currentDisplayStatus)
 			{
 				case DisplayStatus.DisplayingInfo:
-					if (_passedTime > _infoDisplayTime)
+					var limit = _currentInfo.DisplayTime != -1 ? _currentInfo.DisplayTime : _infoDisplayTime;
+					if (_passedTime > limit)
 					{
-						ChangeText();
+						_currentInfo = _informationHolder.GetNextInformation();
+						_currentDisplayStatus = _currentInfo.NextDisplayStatus;
+						_panel.GetComponentInChildren<Text>().text = _currentInfo.InfoText;
+						_allowedSkipping = _currentInfo.Skippable;
 						_passedTime = 0;
 					}
 					break;
 				case DisplayStatus.DisplayResults:
-					DisplayInfo();
+					HandleUserInput();
+					limit = _currentInfo.DisplayTime != -1 ? _currentInfo.DisplayTime : _infoDisplayTime;
+					if (_passedTime > limit)
+					{
+						DisplayInfo();
+						_passedTime = 0;
+					}
 					break;
 				case DisplayStatus.WaitToDisplaySprite:
 					HandleUserInput();
 					if (_passedTime > _timeSettings.SpriteDelayTime)
 					{
+						_panel.GetComponentInChildren<Text>().text = "";
 						ShowSprite();
 						_passedTime = 0;
 					}
@@ -102,7 +113,8 @@ namespace Assets.Scripts.Classes
 					HandleUserInput();
 					break;
 				case DisplayStatus.WaitingUserInput:
-					HandleUserInput();
+					if (_spacebarPressed)
+						_currentDisplayStatus = DisplayStatus.DisplayingInfo;
 					break;
 				case DisplayStatus.Nothing:
 					break;
@@ -110,59 +122,50 @@ namespace Assets.Scripts.Classes
 					if (_passedTime > _infoDisplayTime)
 						GuiHandler.GoToMainMenu();
 					break;
+				case DisplayStatus.GoToNextScene:
+					if (_passedTime > _infoDisplayTime)
+						GuiHandler.GoToTests();
+					break;
 				default:
 					throw new ArgumentOutOfRangeException();
 			}
 		}
 
-		private void ChangeText()
-		{
-			if (_shownInfoText + 1 >= _info.Count)
-			{
-				GuiHandler.GoToTests();
-			}
-			else
-			{
-				if (++_shownInfoText == ShowSpriteIndex)
-				{
-					_currentDisplayStatus = DisplayStatus.WaitToDisplaySprite;
-				}
-				_panelSrt.GetComponentInChildren<Text>().text = _info[_shownInfoText];
-			}
-		}
-
 		private void DisplayInfo()
 		{
-			_infoDisplayTime = _baselineSettings.InfoDisplayTime;
 			double mean = SrtHandler.GetMean(_reactionTimes);
 			_threshold = SrtHandler.GetAcceptableReationTime(_reactionTimes);
 			string performance = OutputTextHandler.Performance(mean, _baselineSettings.NumberOfTasks);
-
-			_panelSrt.GetComponentInChildren<Text>().text = performance;
+			_panel.GetComponentInChildren<Text>().text = performance;
 			GlobalSettings.Gs?.UpdateThreshold(_threshold);
-			_passedTime = 0;
 			_currentDisplayStatus = AntiSpamming.DidHeSpam(_baselineSettings.NumberOfTasks) || !(mean < double.MaxValue) 
 				? DisplayStatus.GoToMainMenu : DisplayStatus.DisplayingInfo;
 		}
 
 		private void HandleUserInput()
 		{
-			if (_iter < 0 || !_spacebarPressed) return;
-			if (_reactionTimes[_iter] < 0)
-				_reactionTimes[_iter] = _passedTime;
+			if (!_spacebarPressed) return;
+			if (_iSprite < 0 || !(_reactionTimes[_iSprite] < 0)) return;
+			_reactionTimes[_iSprite] = _passedTime;
 		}
 
 		private void ShowSprite()
 		{
-			_iter++;
-			_sprite = SpriteHandler.Sh.CreateSprite(SpriteTypes.Baseline, _panelSrt);
+			_iSprite++;
+			_sprite = SpriteHandler.Sh.CreateSprite(SpriteTypes.Baseline, _panel);
 			_currentDisplayStatus = DisplayStatus.DisplayingSprite;
 		}
 
 		private void RemoveSprite()
 		{
 			SpriteHandler.Sh.DestroySprite(_sprite);
-			_currentDisplayStatus = _iter < _baselineSettings.NumberOfTasks - 1 ? DisplayStatus.WaitToDisplaySprite : DisplayStatus.DisplayResults;
+			_currentDisplayStatus = _iSprite < _baselineSettings.NumberOfTasks - 1 ? DisplayStatus.WaitToDisplaySprite : DisplayStatus.DisplayResults;
+		}
+
+		private void CheckSkipping()
+		{
+			if (!_spacebarPressed || !_allowedSkipping) return;
+			_passedTime = 100000;
 		}
 	}
 }

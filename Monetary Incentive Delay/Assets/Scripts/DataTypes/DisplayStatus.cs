@@ -8,6 +8,7 @@
         DisplayingSprite,
         WaitingUserInput,
         Nothing,
-        GoToMainMenu
+        GoToMainMenu,
+		GoToNextScene
     }
 }

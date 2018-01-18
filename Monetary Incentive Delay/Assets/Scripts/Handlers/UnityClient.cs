@@ -3,7 +3,7 @@ using JetBrains.Annotations;
 using Monetary_client;
 using UnityEngine;
 
-namespace Assets.Scripts
+namespace Assets.Scripts.Handlers
 {
 	public class UnityClient : MonoBehaviour
 	{
@@ -43,12 +43,14 @@ namespace Assets.Scripts
 			}
 		}
 
+		[UsedImplicitly]
 		void SetupClient()
 		{
 			_client = new Client();
 			_client.Connect("127.0.0.1", 11111);
 		}
 
+		[UsedImplicitly]
 		void SendMsg()
 		{
 			SendReaction(TaskType.Control, true, 190, 140);

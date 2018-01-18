@@ -1,8 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using Assets.Scripts.DataTypes;
 using Assets.Scripts.Handlers;
-using Interfaces;
+using Assets.Scripts.Interfaces;
 using JetBrains.Annotations;
 using UnityEngine;
 using UnityEngine.UI;
@@ -11,67 +10,88 @@ namespace Assets.Scripts.Classes
 {
 	public class UserInfo : MonoBehaviour
 	{
-		private readonly int _infoTimeSetting;
 		private ISpriteTime _timeSettings;
+		private int _infoDisplayTime;
+		private readonly IInformationHolder _informationHolder;
 		private DisplayStatus _currentDisplayStatus;
-		private float _passedTime;
-		private const int ShowSpriteIndex = 3;
-		private readonly List<string> _info = new List<string>
-		{
-			"First we need to determine your speed to make this a bit more challenging for you.",
-			"When the orange box appears, try to hit space as fast as humanly possible.",
-			"Let's give it a try.",
-			"",
-			"By the way, there won't be any rewards right now. This is only baseline round.",
-			"Prepare yourself for the test round."
-		};
+		private InformationNugget _currentInfo;
 
-		private GameObject _panelInformation;
+		private GameObject _panel;
 		private GameObject _sprite;
 		public GameObject PanelSrt;
-	
-		private int _shownInfoText;
-		private bool _waitForUserInput;
+
+		private float _passedTime;
 		private double _reactionTime;
+		private bool _spacebarPressed;
+		private bool _allowedSkipping;
+		private bool _waitingForUser;
 
 		public UserInfo()
 		{
-			_infoTimeSetting = 4000;
+			_informationHolder = new UserInfoInformation();
 		}
 
 		[UsedImplicitly]
 		private void Start()
 		{
-			_panelInformation = gameObject;
-			_timeSettings = GlobalSettings.Gs != null
-				? GlobalSettings.Gs.SpriteSettings.GetTimeSettings(SpriteTypes.Baseline)
-				: new SpriteTime(new Interval(600, 1000), new Interval(200, 210), SpriteTypes.Baseline);
-			_currentDisplayStatus = DisplayStatus.DisplayingInfo;
+			if (GlobalSettings.Gs == null)
+				GuiHandler.GoToMainMenu();
+			else
+			{
+				_timeSettings = GlobalSettings.Gs.SpriteSettings.BaselineSpriteSettings;
+				_infoDisplayTime = GlobalSettings.Gs.BaselineSettings.InfoDisplayTime;
+			}
+			_panel = gameObject;
+			GetInformation();
+			InitValues();
+		}
+
+		private void GetInformation()
+		{
+			_informationHolder.Reset();
+			_currentInfo = _informationHolder.GetNextInformation();
+			_currentDisplayStatus = _currentInfo.NextDisplayStatus;
+			_panel.GetComponentInChildren<Text>().text = _currentInfo.InfoText;
+			_allowedSkipping = _currentInfo.Skippable;
+		}
+
+		private void InitValues()
+		{
 			_passedTime = 0;
-			_shownInfoText = 0;
-			_waitForUserInput = false;
-			_panelInformation.GetComponentInChildren<Text>().text = _info[_shownInfoText];
+			_waitingForUser = false;
 		}
 
 		[UsedImplicitly]
 		private void Update() 
 		{
-			CheckKeyboard();
+			_spacebarPressed = AntiSpamming.CheckForSpamming(_currentDisplayStatus);
+			CheckSkipping();
 			_passedTime += Time.deltaTime * 1000;
 		
 			switch (_currentDisplayStatus)
 			{
 				case DisplayStatus.DisplayingInfo:
-					if (_passedTime > _infoTimeSetting)
+					var limit = _currentInfo.DisplayTime != -1 ? _currentInfo.DisplayTime : _infoDisplayTime;
+					if (_passedTime > limit)
 					{
-						ChangeText();
+						_currentInfo = _informationHolder.GetNextInformation();
+						_currentDisplayStatus = _currentInfo.NextDisplayStatus;
+						_panel.GetComponentInChildren<Text>().text = _currentInfo.InfoText;
+						_allowedSkipping = _currentInfo.Skippable;
 						_passedTime = 0;
 					}
 					break;
+				case DisplayStatus.DisplayResults:
+					DisplayResults();
+					_passedTime = 0;
+					break;
 				case DisplayStatus.WaitToDisplaySprite:
-					if (_passedTime > _timeSettings.SpriteDisplayTime)
+					limit = _currentInfo.DisplayTime != -1 ? _currentInfo.DisplayTime : _infoDisplayTime;
+					if (_passedTime > limit)
 					{
+						_panel.GetComponentInChildren<Text>().text = "";
 						ShowSprite();
+						_waitingForUser = true;
 						_passedTime = 0;
 					}
 					break;
@@ -81,71 +101,58 @@ namespace Assets.Scripts.Classes
 					HandleUserInput();
 					break;
 				case DisplayStatus.WaitingUserInput:
-					HandleUserInput();
+					if (_spacebarPressed)
+						HandleUserInput();
 					break;
 				case DisplayStatus.Nothing:
 					break;
-				case DisplayStatus.DisplayResults:
-					DisplayResults();
-					break;
 				case DisplayStatus.GoToMainMenu:
-					GuiHandler.GoToMainMenu();
+					if (_passedTime > _infoDisplayTime)
+						GuiHandler.GoToMainMenu();
+					break;
+				case DisplayStatus.GoToNextScene:
+					if (_passedTime > _infoDisplayTime)
+					{
+						_panel.SetActive(false);
+						PanelSrt.SetActive(true);
+					}
 					break;
 				default:
 					throw new ArgumentOutOfRangeException();
 			}	
 		}
 
-		private void ChangeText()
-		{
-			if (_shownInfoText + 1 >= _info.Count)
-			{
-				_panelInformation.SetActive(false);
-				PanelSrt.SetActive(true);
-			}
-			else
-			{
-				if (++_shownInfoText == ShowSpriteIndex)
-				{
-					_waitForUserInput = true;
-					_currentDisplayStatus = DisplayStatus.WaitToDisplaySprite;
-				}
-				_panelInformation.GetComponentInChildren<Text>().text = _info[_shownInfoText];
-			}	
-		}
-
 		private void HandleUserInput()
 		{
-			if (!Input.GetKeyDown("space")) return;
-			_waitForUserInput = false;
+			if (!_spacebarPressed) return;
 			_reactionTime = _passedTime;
 			if(_sprite != null)
 				RemoveSprite();
+			_waitingForUser = false;
 			_currentDisplayStatus = DisplayStatus.DisplayResults;
-			_passedTime = 0;
 		}
 
 		private void DisplayResults()
 		{
-			_panelInformation.GetComponentInChildren<Text>().text = "Your reaction took " + _reactionTime.ToString("#.0") + " miliseconds.";
+			_panel.GetComponentInChildren<Text>().text = "Your reaction took " + _reactionTime.ToString("#.0") + " miliseconds.";
 			_currentDisplayStatus = DisplayStatus.DisplayingInfo;
 		}
 
 		private void ShowSprite()
 		{
-			_sprite = SpriteHandler.Sh.CreateSprite(SpriteTypes.Baseline, _panelInformation);
+			_sprite = SpriteHandler.Sh.CreateSprite(SpriteTypes.Baseline, _panel);
 			_currentDisplayStatus = DisplayStatus.DisplayingSprite;
 		}
 
 		private void RemoveSprite()
 		{
 			SpriteHandler.Sh.DestroySprite(_sprite);
-			_currentDisplayStatus = _waitForUserInput ? DisplayStatus.WaitingUserInput : DisplayStatus.DisplayingInfo;
+			_currentDisplayStatus = _waitingForUser ? DisplayStatus.WaitingUserInput : DisplayStatus.DisplayingInfo;
 		}
 
-		private void CheckKeyboard()
+		private void CheckSkipping()
 		{
-			if (!Input.GetKeyDown("space") || _waitForUserInput) return;
+			if (!_spacebarPressed || !_allowedSkipping || _waitingForUser) return;
 			_passedTime = 100000;
 		}
 	}

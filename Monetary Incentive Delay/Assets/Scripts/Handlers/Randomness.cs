@@ -4,7 +4,7 @@ namespace Assets.Scripts.Handlers
 {
 	public static class Randomness
 	{
-		private static readonly Random _rand  = new Random();
+		public static readonly Random Rand  = new Random();
 
 		public static int[] RandomizeField(int fieldSize, float percentageOfZeroes)
 		{
@@ -13,7 +13,7 @@ namespace Assets.Scripts.Handlers
 			{
 				while (true)
 				{
-					int location = _rand.Next(fieldSize);
+					int location = Rand.Next(fieldSize);
 					if ((location == 0 || randomField[location - 1] != 1 ) && (location == fieldSize - 1 || randomField[location + 1] != 1 ))
 					{
 						randomField[location] = 1;

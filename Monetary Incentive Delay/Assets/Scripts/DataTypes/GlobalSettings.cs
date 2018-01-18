@@ -1,5 +1,5 @@
 ﻿using System;
-using Interfaces;
+using Assets.Scripts.Interfaces;
 using JetBrains.Annotations;
 using UnityEngine;
 

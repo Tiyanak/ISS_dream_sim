@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Handlers
+namespace Assets.Scripts.Handlers
 {
     public static class TimeHandler
     {

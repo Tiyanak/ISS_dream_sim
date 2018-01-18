@@ -1,5 +1,5 @@
 ﻿using System;
-using Interfaces;
+using Assets.Scripts.Interfaces;
 
 namespace Assets.Scripts.DataTypes
 {

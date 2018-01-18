@@ -1,6 +1,6 @@
 ﻿using Assets.Scripts.DataTypes;
 
-namespace Interfaces
+namespace Assets.Scripts.Interfaces
 {
 	public interface ITaskSettings
 	{
