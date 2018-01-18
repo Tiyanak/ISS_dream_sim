@@ -19,7 +19,7 @@ namespace Assets.Scripts.DataTypes
         public SpriteSettings()
         {
             const int afterAWhile = 600;
-            const int cueTimes = 500;
+            const int cueTimes = 600;
             BaselineSpriteSettings = new SpriteTime(new Interval(1000, 2000),new Interval(180, 200), SpriteTypes.Baseline);
             TargetSpriteSettings = new SpriteTime(new Interval(2000, 4000),new Interval(180, 200), SpriteTypes.Target);
             CorrectSpriteSettings = new SpriteTime(new Interval(afterAWhile, afterAWhile),new Interval(cueTimes, cueTimes), SpriteTypes.Correct);

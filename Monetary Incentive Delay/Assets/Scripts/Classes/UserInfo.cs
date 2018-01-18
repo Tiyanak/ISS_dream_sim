@@ -117,9 +117,11 @@ namespace Assets.Scripts.Classes
 		private void HandleUserInput()
 		{
 			if (!Input.GetKeyDown("space")) return;
-			_reactionTime = _passedTime;
-			_currentDisplayStatus = DisplayStatus.DisplayResults;
 			_waitForUserInput = false;
+			_reactionTime = _passedTime;
+			if(_sprite != null)
+				RemoveSprite();
+			_currentDisplayStatus = DisplayStatus.DisplayResults;
 			_passedTime = 0;
 		}
 

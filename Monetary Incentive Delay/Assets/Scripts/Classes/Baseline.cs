@@ -31,13 +31,13 @@ namespace Assets.Scripts.Classes
 
 		private double[] _reactionTimes;
 		private double _threshold = -1;
+		private bool _spacebarPressed;
 
 		private GameObject _sprite;
 		private GameObject _panelSrt;
 
 		private int _shownInfoText;
 		private int _iter;
-		private List<double> _spamCounter;
 
 		[UsedImplicitly]
 		private void Start()
@@ -62,7 +62,6 @@ namespace Assets.Scripts.Classes
 			_reactionTimes = new double[_baselineSettings.NumberOfTasks];
 			for (var i = 0; i < _baselineSettings.NumberOfTasks; i++)
 				_reactionTimes[i] = -1;
-			_spamCounter = new List<double> {DateTime.Now.Millisecond};
 			_currentDisplayStatus = DisplayStatus.DisplayingInfo;
 			_passedTime = 0;
 			_shownInfoText = 0;
@@ -74,7 +73,7 @@ namespace Assets.Scripts.Classes
 		[UsedImplicitly]
 		private void Update()
 		{
-			CheckForSpamming();
+			_spacebarPressed = AntiSpamming.CheckForSpamming(_currentDisplayStatus);
 			_passedTime += Time.deltaTime * 1000;
 
 			switch (_currentDisplayStatus)
@@ -108,7 +107,8 @@ namespace Assets.Scripts.Classes
 				case DisplayStatus.Nothing:
 					break;
 				case DisplayStatus.GoToMainMenu:
-					GuiHandler.GoToMainMenu();
+					if (_passedTime > _infoDisplayTime)
+						GuiHandler.GoToMainMenu();
 					break;
 				default:
 					throw new ArgumentOutOfRangeException();
@@ -133,42 +133,21 @@ namespace Assets.Scripts.Classes
 
 		private void DisplayInfo()
 		{
-			bool mainMenu = false;
 			_infoDisplayTime = _baselineSettings.InfoDisplayTime;
 			double mean = SrtHandler.GetMean(_reactionTimes);
-#if UNITY_EDITOR
-			Debug.Log("mean time: " + mean);
-#endif
 			_threshold = SrtHandler.GetAcceptableReationTime(_reactionTimes);
-			string performance;
-
-			if (mean < 300)
-				performance = "You did great!";
-			else if (mean < 600)
-				performance = "You did O.K.";
-			else if (mean < double.MaxValue)
-				performance = "You did rather poorly.";
-			else
-			{
-				mainMenu = true;
-				performance = "You did nothing!";
-			}
-
-			if (DidHeSpam())
-			{
-				performance += " \nBut you spammed the keyboard";
-				mainMenu = true;
-			}
+			string performance = OutputTextHandler.Performance(mean, _baselineSettings.NumberOfTasks);
 
 			_panelSrt.GetComponentInChildren<Text>().text = performance;
 			GlobalSettings.Gs?.UpdateThreshold(_threshold);
 			_passedTime = 0;
-			_currentDisplayStatus = mainMenu ? DisplayStatus.GoToMainMenu : DisplayStatus.DisplayingInfo;
+			_currentDisplayStatus = AntiSpamming.DidHeSpam(_baselineSettings.NumberOfTasks) || !(mean < double.MaxValue) 
+				? DisplayStatus.GoToMainMenu : DisplayStatus.DisplayingInfo;
 		}
 
 		private void HandleUserInput()
 		{
-			if (!Input.GetKeyDown("space")) return;
+			if (_iter < 0 || !_spacebarPressed) return;
 			if (_reactionTimes[_iter] < 0)
 				_reactionTimes[_iter] = _passedTime;
 		}
@@ -183,26 +162,7 @@ namespace Assets.Scripts.Classes
 		private void RemoveSprite()
 		{
 			SpriteHandler.Sh.DestroySprite(_sprite);
-			_currentDisplayStatus =
-				_iter < _baselineSettings.NumberOfTasks - 1 ? DisplayStatus.WaitToDisplaySprite : DisplayStatus.DisplayResults;
-		}
-
-		private void CheckForSpamming()
-		{
-			if (!Input.GetKeyDown("space")) return;
-			_spamCounter.Add(TimeHandler.GetMilliseconds());
-		}
-
-		private bool DidHeSpam()
-		{
-			int littleTime = 0;
-			for (int i = 1; i < _spamCounter.Count; i++)
-			{			
-				if (_spamCounter[i] - _spamCounter[i - 1] < 200)
-					littleTime++;
-			}
-			double percentage = (double) littleTime / _baselineSettings.NumberOfTasks;
-			return _spamCounter.Count > 2 * _baselineSettings.NumberOfTasks || percentage > 0.3;
+			_currentDisplayStatus = _iter < _baselineSettings.NumberOfTasks - 1 ? DisplayStatus.WaitToDisplaySprite : DisplayStatus.DisplayResults;
 		}
 	}
 }

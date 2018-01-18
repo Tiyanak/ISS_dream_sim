@@ -40,14 +40,15 @@ namespace Assets.Scripts.Classes
 
 		private GameObject _currentSprite;
 		private SpriteTypes _currentSpriteType;
+		private SpriteTypes _upcomingSpriteType;
 		private GameObject _panel;
 		public GameObject RewardPanel;
 		public GameObject PunishmentPanel;
 
 		private int _shownInfoText;
 		private int _iter;
-		private List<double> _spamCounter;
 		private bool _spacebarPressed;
+		private bool _allowedSkipping;
 
 		[UsedImplicitly]
 		private void Start()
@@ -69,11 +70,11 @@ namespace Assets.Scripts.Classes
 			_reactionTimes = new double[_settings.NumberOfTasks];
 			for (var i = 0; i < _settings.NumberOfTasks; i++)
 				_reactionTimes[i] = -1;
-			_spamCounter = new List<double> {DateTime.Now.Millisecond};
 			_currentDisplayStatus = DisplayStatus.DisplayingInfo;
 			_passedTime = 0;
 			_shownInfoText = 0;
 			_panel.GetComponentInChildren<Text>().text = _info[_shownInfoText];
+			_allowedSkipping = true;
 			_iter = -1;
 		}
 
@@ -81,7 +82,8 @@ namespace Assets.Scripts.Classes
 		[UsedImplicitly]
 		private void Update()
 		{
-			CheckForSpamming();
+			_spacebarPressed = AntiSpamming.CheckForSpamming(_currentDisplayStatus);
+			CheckSkipping();
 			_passedTime += Time.deltaTime * 1000;
 
 			switch (_currentDisplayStatus)
@@ -98,7 +100,7 @@ namespace Assets.Scripts.Classes
 					break;
 				case DisplayStatus.WaitToDisplaySprite:
 					HandleUserInput();
-					if (_passedTime > _spriteSettings.GetTimeSettings(_currentSpriteType).SpriteDelayTime)
+					if (_passedTime > _spriteSettings.GetTimeSettings(_upcomingSpriteType).SpriteDelayTime)
 					{
 						ShowSprite();
 						_passedTime = 0;
@@ -146,8 +148,9 @@ namespace Assets.Scripts.Classes
 				switch (_shownInfoText)
 				{
 					case ShowSpriteIndex:
-						_currentSpriteType = _taskType[0] == 0 ? _settings.NonIncentiveOrder[0] : _settings.IncentiveOrder[0];
+						_upcomingSpriteType = _taskType[0] == 0 ? _settings.NonIncentiveOrder[0] : _settings.IncentiveOrder[0];
 						_currentDisplayStatus = DisplayStatus.WaitToDisplaySprite;
+						_allowedSkipping = false;
 						break;
 					case WaitUserSpacebar:
 						_currentDisplayStatus = DisplayStatus.WaitingUserInput;
@@ -161,28 +164,8 @@ namespace Assets.Scripts.Classes
 		{
 			_settings.SetInfoTime(3000);
 			double mean = SrtHandler.GetMean(_reactionTimes);
-#if UNITY_EDITOR
-			Debug.Log("mean time: " + mean);
-#endif
 			_threshold = SrtHandler.GetAcceptableReationTime(_reactionTimes);
-			string performance;
-
-			if (mean < 300)
-				performance = "You did great!";
-			else if (mean < 600)
-				performance = "You did O.K.";
-			else if (mean < double.MaxValue)
-				performance = "You did rather poorly.";
-			else
-			{
-				performance = "You did nothing!";
-			}
-
-			if (DidHeSpam())
-			{
-				performance += " \nBut you spammed the keyboard";
-			}
-
+			string performance = OutputTextHandler.Performance(mean, _settings.NumberOfTasks);
 			_panel.GetComponentInChildren<Text>().text = performance;
 			_passedTime = 0;
 			_currentDisplayStatus = DisplayStatus.DisplayingInfo;
@@ -212,7 +195,8 @@ namespace Assets.Scripts.Classes
 					_settings.IncentiveOrder[_iter % 3] = SpriteTypes.Incorrect;
 			
 			_currentSpriteType = _taskType[_iter/3] == 0 ? _settings.NonIncentiveOrder[_iter % 3] : _settings.IncentiveOrder[_iter % 3];
-			
+			_upcomingSpriteType = _taskType[(_iter + 1)/3] == 0 ? _settings.NonIncentiveOrder[(_iter + 1) % 3] : _settings.IncentiveOrder[(_iter + 1) % 3];
+
 				
 			_currentSprite = SpriteHandler.Sh.CreateSprite(_currentSpriteType, _panel);
 			_currentDisplayStatus = DisplayStatus.DisplayingSprite;
@@ -224,34 +208,11 @@ namespace Assets.Scripts.Classes
 			_currentDisplayStatus =
 				_iter < _settings.NumberOfTasks * 3 - 1 ? DisplayStatus.WaitToDisplaySprite : DisplayStatus.DisplayResults;
 		}
-
-		private void CheckIfSpacebarPressed()
+		
+		private void CheckSkipping()
 		{
-			_spacebarPressed = Input.GetKeyDown("space");
-		}
-
-		private void CheckForSpamming()
-		{
-			CheckIfSpacebarPressed();
-			if (_spacebarPressed && (_currentDisplayStatus == DisplayStatus.DisplayingSprite ||
-			                                  _currentDisplayStatus == DisplayStatus.WaitToDisplaySprite))
-			{
-				_spamCounter.Add(TimeHandler.GetMilliseconds());
-			}
-			else if(_spacebarPressed)
-				_passedTime = 100000;
-		}
-
-		private bool DidHeSpam()
-		{
-			int littleTime = 0;
-			for (int i = 1; i < _spamCounter.Count; i++)
-			{			
-				if (_spamCounter[i] - _spamCounter[i - 1] < 200)
-					littleTime++;
-			}
-			double percentage = (double) littleTime / _settings.NumberOfTasks;
-			return _spamCounter.Count > 2 * _settings.NumberOfTasks || percentage > 0.3;
+			if (!_spacebarPressed || !_allowedSkipping) return;
+			_passedTime = 100000;
 		}
 	}
 }
