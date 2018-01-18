@@ -16,15 +16,15 @@ namespace Assets.Scripts.Classes
 		}
 
 		[UsedImplicitly]
-		private void Start()
-		{
+		private void Start() {
 			_core.Start(gameObject, RewardPanel, PunishmentPanel);
 		}
-		
+	
 		[UsedImplicitly]
 		private void Update()
 		{
 			_core.Update();
 		}
+		
 	}
 }

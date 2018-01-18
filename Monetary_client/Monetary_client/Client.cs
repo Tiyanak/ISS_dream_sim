@@ -46,63 +46,42 @@ namespace Monetary_client
             this.client.Disconnect("Goodbye from client");
         }
 
-        public void MsgListener()
-        {            
-            while ((msg = this.client.ReadMessage()) != null)
+        public string MsgListener()
+        {
+            string recMsg = null;
+
+            switch (msg.MessageType)
             {
-                switch (msg.MessageType)
-                {
-                    case NetIncomingMessageType.Data:
+                case NetIncomingMessageType.Data:
+                    recMsg = msg.ReadString();
+                    NetConnection clientConnection = msg.SenderConnection;
+                    string clientId = msg.SenderConnection.RemoteUniqueIdentifier.ToString();                        
+                    Console.WriteLine("Received msg: " + recMsg);
+                    break;
 
-                        string data = msg.ReadString();
-                        NetConnection clientConnection = msg.SenderConnection;
-                        string clientId = msg.SenderConnection.RemoteUniqueIdentifier.ToString();
+                case NetIncomingMessageType.StatusChanged:
+                    switch (msg.SenderConnection.Status)
+                    {
+                        case NetConnectionStatus.Connected:
+                            string clientConnectedId = msg.SenderConnection.RemoteUniqueIdentifier.ToString();
+                            Console.WriteLine("Client connected: " + clientConnectedId + " : " + client.UniqueIdentifier);
+                            break;
 
-                        try
-                        {
-                            Parameters r = new Parameters(data);
-                            data = r.ToString();
-                        }
-                        catch (Exception e)
-                        {
-                            Console.WriteLine("Cant deserialize that.");
-                        }
-
-                        Console.WriteLine("Received msg: " + data);
-
-                        break;
-
-                    case NetIncomingMessageType.StatusChanged:
-                          
-                        switch (msg.SenderConnection.Status)
-                        {
-                            case NetConnectionStatus.Connected:
-
-                                string clientConnectedId = msg.SenderConnection.RemoteUniqueIdentifier.ToString();
-
-                                Console.WriteLine("Client connected: " + clientConnectedId + " : " + client.UniqueIdentifier);
-
-                                break;
-
-                            case NetConnectionStatus.Disconnected:
-
-                                string clientDisconnectedId = msg.SenderConnection.RemoteUniqueIdentifier.ToString();
-                                string goodByeMsg = msg.ReadString();
-
-                                Console.WriteLine("Client disconnected: " + clientDisconnectedId + " : " + goodByeMsg);
-
-                                break;
-                        }
-
-                        break;
+                        case NetConnectionStatus.Disconnected:
+                            string clientDisconnectedId = msg.SenderConnection.RemoteUniqueIdentifier.ToString();
+                            string goodByeMsg = msg.ReadString();
+                            Console.WriteLine("Client disconnected: " + clientDisconnectedId + " : " + goodByeMsg);
+                            break;
+                    }
+                    break;
                             
-                    default:
-
-                        string unhandledMsgType = msg.MessageType.ToString();
-                            
-                        break;
-                }
+                default:
+                    string unhandledMsgType = msg.MessageType.ToString();
+                    break;
             }
+
+            return recMsg;
+            
         }
 
         public void SendMsg(string msg)

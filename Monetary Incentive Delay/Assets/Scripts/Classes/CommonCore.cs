@@ -1,7 +1,7 @@
 ﻿using System;
 using Assets.Scripts.DataTypes;
-using Assets.Scripts.Handlers;
 using Assets.Scripts.Interfaces;
+using Assets.Scripts.Handlers;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -16,6 +16,7 @@ namespace Assets.Scripts.Classes
 		private readonly IInformationHolder _informationHolder;
 		private DisplayStatus _currentDisplayStatus;
 		private InformationNugget _currentInfo;
+		private long _taskId = 0;
 
 		private float _passedTime;
 		private double[] _reactionTimes;
@@ -78,6 +79,7 @@ namespace Assets.Scripts.Classes
 			SetPanels(panel, rewardPanel, punishmentPanel);
 			GetInformation();
 			InitValues();
+			SendStartTaskMsg();
 		}
 
 		private void SetPanels(GameObject panel, GameObject rewardPanel, GameObject punishmentPanel)
@@ -112,6 +114,8 @@ namespace Assets.Scripts.Classes
 			_spacebarPressed = AntiSpamming.CheckForSpamming(_currentDisplayStatus);
 			CheckSkipping();
 			_passedTime += Time.deltaTime * 1000;
+
+			HandleServerParams();
 
 			switch (_currentDisplayStatus)
 			{
@@ -190,10 +194,13 @@ namespace Assets.Scripts.Classes
 			_reactionTimes[(_iSprite - 1) / 3] = _passedTime;
 			if (_passedTime > _threshold)
 				type = SpriteTypes.Incorrect;
-			if (_taskType[(_iSprite - 1) / 3] == 0)
+			if (_taskType[(_iSprite - 1) / 3] == 0) {
 				_taskSettings.NonIncentiveOrder[2] = type;
-			else
+				SendFeedback(_passedTime, false);
+			} else {
 				_taskSettings.IncentiveOrder[2] = type;
+				SendFeedback(_passedTime, true);
+			}
 		}
 
 		private void ShowSprite()
@@ -224,5 +231,43 @@ namespace Assets.Scripts.Classes
 			if (!_spacebarPressed || !_allowedSkipping) return;
 			_passedTime = 100000;
 		}
+
+		private void SendStartTaskMsg()
+        {
+            UnityClient.Communicator.SendReaction(0, 0, TaskType.Control, false, 0, _threshold);
+        }
+
+        private void SendEndTaskMsg()
+        {
+            UnityClient.Communicator.SendReaction(_taskId, 1, TaskType.Control, false, 0, _threshold);
+        }
+
+        private void SendFeedback(double _reactionTime, bool incentive)
+        {
+            UnityClient.Communicator.SendReaction(_taskId, 2, TaskType.Control, incentive, _reactionTime, _threshold);
+        }
+
+        private void HandleServerParams()
+        {
+
+			Msgs.Parameters serverParams = UnityClient.Communicator.ReceiveParameters();
+			if (serverParams == null) return;
+
+            switch (serverParams.msgType)
+            {
+                case 0: // Started task - receive my task id
+                    _taskId = serverParams.taskId;
+                    break;
+
+                case 1: // Ended task - receive confirm msg from server about ending
+                    break;
+
+                case 2: // Receive params from server
+                    break;
+
+                default:
+                    break;
+            }
+        }
 	}
 }

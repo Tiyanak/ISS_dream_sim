@@ -1,3 +1,4 @@
+using System;
 using Assets.Scripts.DataTypes;
 using JetBrains.Annotations;
 using Monetary_client;
@@ -10,7 +11,6 @@ namespace Assets.Scripts.Handlers
 		public static UnityClient Communicator;
 		
 		public int Counter;
-
 		Client _client;
 
 		public UnityClient()
@@ -32,15 +32,7 @@ namespace Assets.Scripts.Handlers
 		[UsedImplicitly]
 		void Start()
 		{
-		}
-
-		[UsedImplicitly]
-		void Update()
-		{
-			if (_client != null)
-			{
-				ReceiveParameters();
-			}
+			SetupClient();
 		}
 
 		[UsedImplicitly]
@@ -51,25 +43,27 @@ namespace Assets.Scripts.Handlers
 		}
 
 		[UsedImplicitly]
-		void SendMsg()
+		void SendMsg(string msg)
 		{
-			SendReaction(TaskType.Control, true, 190, 140);
+			_client.SendMsg(msg);
 		}
 
-		public bool SendReaction(TaskType type, bool incentive, double reactionTime, double threshold)
+		public void SendReaction(long taskId, int msgType, TaskType type, bool incentive, double reactionTime, double threshold)
 		{
-			Reaction reaction = new Reaction(type.ToString(), incentive, reactionTime, threshold);
+			Classes.Msgs.Reaction reaction = new Classes.Msgs.Reaction(taskId, msgType, type.ToString(), incentive, reactionTime, threshold);
 			_client.SendMsg(reaction.serialize());
-
-			return true;
 		}
 
-		public bool ReceiveParameters()
+		public Classes.Msgs.Parameters ReceiveParameters()
 		{
-
-			_client.MsgListener();
-
-			return true;
+			Classes.Msgs.Parameters recParams = null;
+			try {
+				recParams = new Classes.Msgs.Parameters(_client.MsgListener()); 
+			} catch (Exception e) {
+				print("Could not deserialize server data to class Parameters.");
+			} 
+		
+			return recParams;
 
 		}
 	}

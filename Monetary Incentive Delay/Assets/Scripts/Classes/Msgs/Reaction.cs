@@ -6,12 +6,14 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
 
-namespace Monetary_client
+namespace Assets.Scripts.Classes.Msgs
 {
     [Serializable]
     public class Reaction
     {
 
+        public long taskId;
+        public int msgType;
         public string taskType;
         public bool incentive;
         public double reactionTime;
@@ -19,8 +21,10 @@ namespace Monetary_client
 
         public Reaction() { }
 
-        public Reaction(string taskType, bool incentive, double reactionTime, double threshold)
+        public Reaction(long id, int msgType, string taskType, bool incentive, double reactionTime, double threshold)
         {
+            this.taskId = id;
+            this.msgType = msgType;
             this.taskType = taskType;
             this.incentive = incentive;
             this.reactionTime = reactionTime;
@@ -31,6 +35,8 @@ namespace Monetary_client
         {
             Reaction desData = this.deserialize(serializedData);
 
+            this.taskId = desData.taskId;
+            this.msgType = desData.msgType;
             this.taskType = desData.taskType;
             this.incentive = desData.incentive;
             this.reactionTime = desData.reactionTime;
@@ -69,10 +75,27 @@ namespace Monetary_client
 
         public override string ToString()
         {
-            return "Task: " + this.taskType +
+            return "Id: " + this.taskId.ToString() +
+                "; MsgType: " + this.msgType.ToString() + 
+                "; Task: " + this.taskType +
                 "; Incentive: " + this.incentive.ToString() +
                 "; Reaction time: " + this.reactionTime.ToString() +
                 "; Threshold: " + this.threshold.ToString();
+        }
+
+        public string getFieldsCSV()
+        {
+            return "Id,MsgType,Task,Incentive,ReactionTime,Threshold";
+        }
+
+        public string toCSV()
+        {
+            return this.taskId.ToString() +
+                "," + this.msgType.ToString() +
+                "," + this.taskType +
+                "," + this.incentive.ToString() +
+                "," + this.reactionTime.ToString() +
+                "," + this.threshold.ToString();
         }
     }
 }

@@ -74,8 +74,6 @@ namespace Monetary_server
                 "; CueToTargetTime: " + this.cueToTargetTime.ToString() +
                 "; Threshold: " + this.threshold.ToString();
         }
-
-
-
+        
     }
 }
