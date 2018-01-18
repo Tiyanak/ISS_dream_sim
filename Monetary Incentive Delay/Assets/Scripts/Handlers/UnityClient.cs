@@ -1,8 +1,8 @@
 using System;
-using Assets.Scripts.DataTypes;
 using JetBrains.Annotations;
 using Monetary_client;
 using UnityEngine;
+using Assets.Scripts.DataTypes;
 
 namespace Assets.Scripts.Handlers
 {
@@ -59,6 +59,7 @@ namespace Assets.Scripts.Handlers
 			Classes.Msgs.Parameters recParams = null;
 			try {
 				recParams = new Classes.Msgs.Parameters(_client.MsgListener()); 
+				print("Serialized params: " + recParams.ToString());
 			} catch (Exception e) {
 				print("Could not deserialize server data to class Parameters.");
 			} 

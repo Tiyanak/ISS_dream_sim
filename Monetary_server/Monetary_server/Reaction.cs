@@ -21,9 +21,9 @@ namespace Monetary_server
 
         public Reaction() { }
 
-        public Reaction(long id, int msgType, string taskType, bool incentive, double reactionTime, double threshold)
+        public Reaction(long taskId, int msgType, string taskType, bool incentive, double reactionTime, double threshold)
         {
-            this.taskId = id;
+            this.taskId = taskId;
             this.msgType = msgType;
             this.taskType = taskType;
             this.incentive = incentive;
@@ -88,6 +88,11 @@ namespace Monetary_server
             return "Id,MsgType,Task,Incentive,ReactionTime,Threshold";
         }
 
+        public string getFieldsSemiCSV()
+        {
+            return "Id;MsgType;Task;Incentive;ReactionTime;Threshold";
+        }
+
         public string toCSV()
         {
             return this.taskId.ToString() +
@@ -96,6 +101,16 @@ namespace Monetary_server
                 "," + this.incentive.ToString() +
                 "," + this.reactionTime.ToString() +
                 "," + this.threshold.ToString();
+        }
+
+        public string toSemiCSV()
+        {
+            return this.taskId.ToString() +
+                ";" + this.msgType.ToString() +
+                ";" + this.taskType +
+                ";" + this.incentive.ToString() +
+                ";" + this.reactionTime.ToString() +
+                ";" + this.threshold.ToString();
         }
     }
 }

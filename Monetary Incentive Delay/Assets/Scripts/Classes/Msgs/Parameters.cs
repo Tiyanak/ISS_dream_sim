@@ -69,13 +69,11 @@ namespace Assets.Scripts.Classes.Msgs
         public override string ToString()
         {
             return "TaskId: " + this.taskId.ToString() +
-                "; MsgType: " + this.msgType.ToString() + 
+                "; MsgType: " + this.msgType.ToString() +
                 "; TargetDisplayTime: " + this.targetDisplayTime.ToString() +
                 "; CueToTargetTime: " + this.cueToTargetTime.ToString() +
                 "; Threshold: " + this.threshold.ToString();
         }
-
-
 
     }
 }

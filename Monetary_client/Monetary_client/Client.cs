@@ -50,6 +50,9 @@ namespace Monetary_client
         {
             string recMsg = null;
 
+            msg = this.client.ReadMessage();
+            if (msg == null) return null;
+
             switch (msg.MessageType)
             {
                 case NetIncomingMessageType.Data:

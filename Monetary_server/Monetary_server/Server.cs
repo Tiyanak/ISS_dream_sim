@@ -17,13 +17,13 @@ namespace Monetary_server
         NetServer server;
         NetIncomingMessage msg;
         int port = 11111;
-        private Dictionary<string, Writer> writers;
+        private Dictionary<long, Writer> writers;
 
         public Server()
         {
-            this.writers = new Dictionary<string, Writer>();
+            this.writers = new Dictionary<long, Writer>();
             this.config = new NetPeerConfiguration("MonetaryTest") { Port = this.port };
-            this.server = new NetServer(this.config);
+            this.server = new NetServer(this.config);           
         }
 
         public Server(int port)
@@ -63,8 +63,13 @@ namespace Monetary_server
                             try
                             {
                                 Reaction r = new Reaction(data);
-                                HandleReaction(r, clientConnection);
                                 data = r.ToString();
+                                try {
+                                    HandleReaction(r, clientConnection);
+                                } catch (Exception e)
+                                {
+                                    Console.WriteLine("Exception while handling received REACTION from client!");
+                                }
                             } catch (Exception e)
                             {
                                 Console.WriteLine("Cant deserialize that.");
@@ -126,17 +131,19 @@ namespace Monetary_server
             {
                 case 0: // start task
                     long id = GetMilliseconds();
-                    Writer writer = new Writer(reaction.taskType + "_" + id.ToString() + ".csv");
-                    writer.writeLine(reaction.getFieldsCSV());
-                    this.writers[id.ToString()] = writer;
+                    string path = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile) + "\\Desktop\\monetary_" + reaction.taskType + "_" + id.ToString() + ".csv";
+                    Writer writer = new Writer(path);
+                    writer.writeLine(reaction.getFieldsSemiCSV());
+                    this.writers[id] = writer;
+                    SendMsg(new Parameters(id, 0, 200, 200, 200).serialize(), clientConnection);
                     break;
 
                 case 1: // end task
-                    this.writers[reaction.taskId.ToString()].closeFile();
+                    this.writers[reaction.taskId].closeFile();
                     break;
 
                 case 2: // reaction msg
-                    this.writers[reaction.taskId.ToString()].writeLine(reaction.toCSV());
+                    this.writers[reaction.taskId].writeLine(reaction.toSemiCSV());
                     // izracun parametara iz reakcije igraca sa strane klijenta
                     double targetDisplayTime = 0;
                     double cueToTargetTime = 0;
@@ -145,8 +152,7 @@ namespace Monetary_server
 
                     break;
 
-                default:
-                    Console.WriteLine("Reaction message: ", reaction.ToString());
+                default:                   
                     break;
             }
 

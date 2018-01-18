@@ -21,9 +21,9 @@ namespace Assets.Scripts.Classes.Msgs
 
         public Reaction() { }
 
-        public Reaction(long id, int msgType, string taskType, bool incentive, double reactionTime, double threshold)
+        public Reaction(long taskId, int msgType, string taskType, bool incentive, double reactionTime, double threshold)
         {
-            this.taskId = id;
+            this.taskId = taskId;
             this.msgType = msgType;
             this.taskType = taskType;
             this.incentive = incentive;
@@ -76,7 +76,7 @@ namespace Assets.Scripts.Classes.Msgs
         public override string ToString()
         {
             return "Id: " + this.taskId.ToString() +
-                "; MsgType: " + this.msgType.ToString() + 
+                "; MsgType: " + this.msgType.ToString() +
                 "; Task: " + this.taskType +
                 "; Incentive: " + this.incentive.ToString() +
                 "; Reaction time: " + this.reactionTime.ToString() +

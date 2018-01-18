@@ -166,6 +166,7 @@ namespace Assets.Scripts.Classes
 					limit = _currentInfo.DisplayTime != -1 ? _currentInfo.DisplayTime : _taskSettings.InfoTime;
 					if (_passedTime > limit)
 					{
+						SendEndTaskMsg();
 						if (Randomness.Rand.NextDouble() < 0.5)
 							_punishmentPanel.SetActive(true);
 						else
@@ -184,6 +185,7 @@ namespace Assets.Scripts.Classes
 			string performance = OutputTextHandler.Performance(mean, _taskSettings.NumberOfTasks);
 			_panel.GetComponentInChildren<Text>().text = performance;
 			_currentDisplayStatus = DisplayStatus.DisplayingInfo;
+			SendEndTaskMsg();
 		}
 
 		private void HandleUserInput()
@@ -234,17 +236,17 @@ namespace Assets.Scripts.Classes
 
 		private void SendStartTaskMsg()
         {
-            UnityClient.Communicator.SendReaction(0, 0, TaskType.Control, false, 0, _threshold);
+            UnityClient.Communicator.SendReaction(0, 0, _myType, false, 0, _threshold);
         }
 
         private void SendEndTaskMsg()
         {
-            UnityClient.Communicator.SendReaction(_taskId, 1, TaskType.Control, false, 0, _threshold);
+            UnityClient.Communicator.SendReaction(_taskId, 1, _myType, false, 0, _threshold);
         }
 
         private void SendFeedback(double _reactionTime, bool incentive)
         {
-            UnityClient.Communicator.SendReaction(_taskId, 2, TaskType.Control, incentive, _reactionTime, _threshold);
+            UnityClient.Communicator.SendReaction(_taskId, 2, _myType, incentive, _reactionTime, _threshold);
         }
 
         private void HandleServerParams()
@@ -257,6 +259,7 @@ namespace Assets.Scripts.Classes
             {
                 case 0: // Started task - receive my task id
                     _taskId = serverParams.taskId;
+					Debug.Log("MANAGE TO READ TASK ID!");
                     break;
 
                 case 1: // Ended task - receive confirm msg from server about ending
