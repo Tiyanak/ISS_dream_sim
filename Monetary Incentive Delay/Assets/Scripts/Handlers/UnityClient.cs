@@ -51,7 +51,7 @@ namespace Assets.Scripts.Handlers
 		public void SendReaction(long taskId, int msgType, TaskType type, bool incentive, double reactionTime, double threshold)
 		{
 			Classes.Msgs.Reaction reaction = new Classes.Msgs.Reaction(taskId, msgType, type.ToString(), incentive, reactionTime, threshold);
-			_client.SendMsg(reaction.serialize());
+			_client.SendMsg(reaction.Serialize());
 		}
 
 		public Classes.Msgs.Parameters ReceiveParameters()
@@ -59,8 +59,8 @@ namespace Assets.Scripts.Handlers
 			Classes.Msgs.Parameters recParams = null;
 			try {
 				recParams = new Classes.Msgs.Parameters(_client.MsgListener()); 
-				print("Serialized params: " + recParams.ToString());
-			} catch (Exception e) {
+				print("Serialized params: " + recParams);
+			} catch (Exception) {
 				print("Could not deserialize server data to class Parameters.");
 			} 
 		

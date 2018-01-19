@@ -1,7 +1,8 @@
 ﻿using System.Collections.Generic;
+using Assets.Scripts.DataTypes;
 using Assets.Scripts.Interfaces;
 
-namespace Assets.Scripts.DataTypes
+namespace Assets.Scripts.Settings
 {
 	public class UserInfoInformation : IInformationHolder
 	{
@@ -66,10 +67,10 @@ namespace Assets.Scripts.DataTypes
 		{
 			new InformationNugget("You have arrived at control task.", DisplayStatus.DisplayingInfo, -1, true),
 			new InformationNugget("Here you won't gain nor lose any money.", DisplayStatus.DisplayingInfo, -1, true),
-			new InformationNugget("There are two different cues representing two different trials.", DisplayStatus.DisplayingInfo, -1, true),
-			new InformationNugget("This box represents incentive cue, i.e. important", DisplayStatus.DisplayingInfo, -1, true),
-			new InformationNugget("This box represents nonincentive cue, i.e. not important", DisplayStatus.DisplayingInfo, -1, true),
-			new InformationNugget("After these cues you may expect a target box to apprear.", DisplayStatus.DisplayingInfo, -1, true),
+			new InformationNugget("There are two different cues representing two different trials.", DisplayStatus.DisplayBoth, -1, true),
+			new InformationNugget("This box represents incentive cue, i.e. important", DisplayStatus.DisplayBoth, -1, true, SpriteTypes.ControlCue),
+			new InformationNugget("This box represents nonincentive cue, i.e. not important", DisplayStatus.DisplayBoth, -1, true, SpriteTypes.ControlNonIncentive),
+			new InformationNugget("After these cues you may expect a target box to apprear.", DisplayStatus.DisplayingInfo, -1, true, SpriteTypes.Target),
 			new InformationNugget("Your reaction time is measured after the TARGET box appears.", DisplayStatus.DisplayingInfo, -1, true),
 			new InformationNugget("Press space to begin", DisplayStatus.WaitingUserInput, -1, true),
 			new InformationNugget("", DisplayStatus.WaitToDisplaySprite, -1, false),
@@ -98,10 +99,10 @@ namespace Assets.Scripts.DataTypes
 		{
 			new InformationNugget("You have arrived at reward task.", DisplayStatus.DisplayingInfo, -1, true),
 			new InformationNugget("Here you will GAIN money at incentive tasks!", DisplayStatus.DisplayingInfo, -1, true),
-			new InformationNugget("There are two different cues representing two different trials.", DisplayStatus.DisplayingInfo, -1, true),
-			new InformationNugget("This box represents incentive cue, i.e. important", DisplayStatus.DisplayingInfo, -1, true),
-			new InformationNugget("This box represents nonincentive cue, i.e. not important", DisplayStatus.DisplayingInfo, -1, true),
-			new InformationNugget("After these cues you may expect a target box to apprear.", DisplayStatus.DisplayingInfo, -1, true),
+			new InformationNugget("There are two different cues representing two different trials.", DisplayStatus.DisplayBoth, -1, true),
+			new InformationNugget("This box represents incentive cue, i.e. important", DisplayStatus.DisplayBoth, -1, true, SpriteTypes.RewardCue),
+			new InformationNugget("This box represents nonincentive cue, i.e. not important", DisplayStatus.DisplayBoth, -1, true, SpriteTypes.RewardNonIncentive),
+			new InformationNugget("After these cues you may expect a target box to apprear.", DisplayStatus.DisplayingInfo, -1, true, SpriteTypes.Target),
 			new InformationNugget("Your reaction time is measured after the TARGET box appears.", DisplayStatus.DisplayingInfo, -1, true),
 			new InformationNugget("Press space to begin", DisplayStatus.WaitingUserInput, -1, true),
 			new InformationNugget("", DisplayStatus.WaitToDisplaySprite, -1, false),
@@ -130,10 +131,10 @@ namespace Assets.Scripts.DataTypes
 		{
 			new InformationNugget("You have arrived at punishment task.", DisplayStatus.DisplayingInfo, -1, true),
 			new InformationNugget("Here you will LOSE money at incentive tasks!", DisplayStatus.DisplayingInfo, -1, true),
-			new InformationNugget("There are two different cues representing two different trials.", DisplayStatus.DisplayingInfo, -1, true),
-			new InformationNugget("This box represents incentive cue, i.e. important", DisplayStatus.DisplayingInfo, -1, true),
-			new InformationNugget("This box represents nonincentive cue, i.e. not important", DisplayStatus.DisplayingInfo, -1, true),
-			new InformationNugget("After these cues you may expect a target box to apprear.", DisplayStatus.DisplayingInfo, -1, true),
+			new InformationNugget("There are two different cues representing two different trials.", DisplayStatus.DisplayBoth, -1, true),
+			new InformationNugget("This box represents incentive cue, i.e. important", DisplayStatus.DisplayBoth, -1, true, SpriteTypes.PunishmentCue),
+			new InformationNugget("This box represents nonincentive cue, i.e. not important", DisplayStatus.DisplayBoth, -1, true, SpriteTypes.PunishmentNonIncentive),
+			new InformationNugget("After these cues you may expect a target box to apprear.", DisplayStatus.DisplayingInfo, -1, true, SpriteTypes.Target),
 			new InformationNugget("Your reaction time is measured after the TARGET box appears.", DisplayStatus.DisplayingInfo, -1, true),
 			new InformationNugget("Press space to begin", DisplayStatus.WaitingUserInput, -1, true),
 			new InformationNugget("", DisplayStatus.WaitToDisplaySprite, -1, false),

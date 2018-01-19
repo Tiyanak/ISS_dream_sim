@@ -2,6 +2,7 @@
 using Assets.Scripts.DataTypes;
 using Assets.Scripts.Handlers;
 using Assets.Scripts.Interfaces;
+using Assets.Scripts.Settings;
 using JetBrains.Annotations;
 using UnityEngine;
 using UnityEngine.UI;
@@ -116,7 +117,7 @@ namespace Assets.Scripts.Classes
 					if (_spacebarPressed)
 						_currentDisplayStatus = DisplayStatus.DisplayingInfo;
 					break;
-				case DisplayStatus.Nothing:
+				case DisplayStatus.DisplayBoth:
 					break;
 				case DisplayStatus.GoToMainMenu:
 					if (_passedTime > _infoDisplayTime)

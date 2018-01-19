@@ -6,6 +6,13 @@ using Image = UnityEngine.UI.Image;
 
 namespace Assets.Scripts.Handlers
 {
+	public enum Position
+	{
+		Middle,
+		Above,
+		Below
+	}
+
     public class SpriteHandler : MonoBehaviour
     {
         public static SpriteHandler Sh;
@@ -32,7 +39,7 @@ namespace Assets.Scripts.Handlers
             DontDestroyOnLoad(this);
         }
         
-        public GameObject CreateSprite(SpriteTypes spriteType, GameObject panel)
+        public GameObject CreateSprite(SpriteTypes spriteType, GameObject panel, Position position = Position.Middle)
         {
             var newObj = new GameObject();
             var newImage = newObj.AddComponent<Image>();
@@ -73,7 +80,20 @@ namespace Assets.Scripts.Handlers
                     throw new ArgumentOutOfRangeException(nameof(spriteType), spriteType, null);
             }
             newObj.GetComponent<RectTransform>().SetParent(panel.transform);
-	        newObj.transform.localPosition = new Vector3(0,0);
+	        switch (position)
+	        {
+		        case Position.Middle:
+			        newObj.transform.localPosition = new Vector3(0, 0);
+					break;
+		        case Position.Above:
+			        newObj.transform.localPosition = new Vector3(0, 200);
+					break;
+		        case Position.Below:
+			        newObj.transform.localPosition = new Vector3(0, -200);
+					break;
+		        default:
+			        throw new ArgumentOutOfRangeException(nameof(position), position, null);
+	        }
             newObj.SetActive(true);
             return newObj;
         }

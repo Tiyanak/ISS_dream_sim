@@ -1,7 +1,8 @@
 ﻿using System;
+using Assets.Scripts.DataTypes;
 using Assets.Scripts.Interfaces;
 
-namespace Assets.Scripts.DataTypes
+namespace Assets.Scripts.Settings
 {
     public class SpriteSettings : ISpriteSettings
     {

@@ -7,7 +7,7 @@
         WaitToDisplaySprite,
         DisplayingSprite,
         WaitingUserInput,
-        Nothing,
+        DisplayBoth,
         GoToMainMenu,
 		GoToNextScene
     }

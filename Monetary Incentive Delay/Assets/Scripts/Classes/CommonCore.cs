@@ -2,6 +2,7 @@
 using Assets.Scripts.DataTypes;
 using Assets.Scripts.Interfaces;
 using Assets.Scripts.Handlers;
+using Assets.Scripts.Settings;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -16,7 +17,7 @@ namespace Assets.Scripts.Classes
 		private readonly IInformationHolder _informationHolder;
 		private DisplayStatus _currentDisplayStatus;
 		private InformationNugget _currentInfo;
-		private long _taskId = 0;
+		private long _taskId;
 
 		private float _passedTime;
 		private double[] _reactionTimes;
@@ -123,6 +124,8 @@ namespace Assets.Scripts.Classes
 					var limit = _currentInfo.DisplayTime != -1 ? _currentInfo.DisplayTime : _taskSettings.InfoTime;
 					if (_passedTime > limit)
 					{
+						if(_currentSprite != null)
+							SpriteHandler.Sh.DestroySprite(_currentSprite);
 						_currentInfo = _informationHolder.GetNextInformation();
 						_currentDisplayStatus = _currentInfo.NextDisplayStatus;
 						_panel.GetComponentInChildren<Text>().text = _currentInfo.InfoText;
@@ -156,7 +159,19 @@ namespace Assets.Scripts.Classes
 					if (_spacebarPressed)
 						_currentDisplayStatus = DisplayStatus.DisplayingInfo;
 					break;
-				case DisplayStatus.Nothing:
+				case DisplayStatus.DisplayBoth:
+					limit = _currentInfo.DisplayTime != -1 ? _currentInfo.DisplayTime : _taskSettings.InfoTime;
+					if (_passedTime > limit)
+					{
+						if (_currentSprite != null)
+							SpriteHandler.Sh.DestroySprite(_currentSprite);
+						_currentInfo = _informationHolder.GetNextInformation();
+						_currentSprite = SpriteHandler.Sh.CreateSprite(_currentInfo.Type, _panel, Position.Above);
+						_currentDisplayStatus = _currentInfo.NextDisplayStatus;
+						_panel.GetComponentInChildren<Text>().text = _currentInfo.InfoText;
+						_allowedSkipping = _currentInfo.Skippable;
+						_passedTime = 0;
+					}
 					break;
 				case DisplayStatus.GoToMainMenu:
 					if (_passedTime > _taskSettings.InfoTime)
@@ -244,9 +259,9 @@ namespace Assets.Scripts.Classes
             UnityClient.Communicator.SendReaction(_taskId, 1, _myType, false, 0, _threshold);
         }
 
-        private void SendFeedback(double _reactionTime, bool incentive)
+        private void SendFeedback(double reactionTime, bool incentive)
         {
-            UnityClient.Communicator.SendReaction(_taskId, 2, _myType, incentive, _reactionTime, _threshold);
+            UnityClient.Communicator.SendReaction(_taskId, 2, _myType, incentive, reactionTime, _threshold);
         }
 
         private void HandleServerParams()
@@ -255,10 +270,10 @@ namespace Assets.Scripts.Classes
 			Msgs.Parameters serverParams = UnityClient.Communicator.ReceiveParameters();
 			if (serverParams == null) return;
 
-            switch (serverParams.msgType)
+            switch (serverParams.MsgType)
             {
                 case 0: // Started task - receive my task id
-                    _taskId = serverParams.taskId;
+                    _taskId = serverParams.TaskId;
 					Debug.Log("MANAGE TO READ TASK ID!");
                     break;
 
@@ -266,9 +281,6 @@ namespace Assets.Scripts.Classes
                     break;
 
                 case 2: // Receive params from server
-                    break;
-
-                default:
                     break;
             }
         }

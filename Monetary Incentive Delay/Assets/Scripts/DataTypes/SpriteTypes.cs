@@ -2,6 +2,7 @@
 {
 	public enum SpriteTypes
 	{
+		None,
 		Correct,
 		Incorrect,
 		Baseline,

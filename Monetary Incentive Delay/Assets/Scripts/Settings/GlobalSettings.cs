@@ -1,9 +1,10 @@
 ﻿using System;
+using Assets.Scripts.DataTypes;
 using Assets.Scripts.Interfaces;
 using JetBrains.Annotations;
 using UnityEngine;
 
-namespace Assets.Scripts.DataTypes
+namespace Assets.Scripts.Settings
 {
 	public class GlobalSettings : MonoBehaviour
 	{

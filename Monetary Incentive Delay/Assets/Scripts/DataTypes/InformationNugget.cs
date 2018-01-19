@@ -6,13 +6,15 @@
 		public DisplayStatus NextDisplayStatus { get; private set; }
 		public int DisplayTime { get; private set; }
 		public bool Skippable { get; private set; }
+		public SpriteTypes Type { get; private set; }
 
-		public InformationNugget(string infoText, DisplayStatus nextDisplayStatus, int displayTime, bool skippable)
+		public InformationNugget(string infoText, DisplayStatus nextDisplayStatus, int displayTime, bool skippable, SpriteTypes type = SpriteTypes.None)
 		{
 			InfoText = infoText;
 			NextDisplayStatus = nextDisplayStatus;
 			DisplayTime = displayTime;
 			Skippable = skippable;
+			Type = type;
 		}
 
 		public void SetInfoText(string newInfoText)
@@ -33,6 +35,11 @@
 		public void SetSkippable(bool skippable)
 		{
 			Skippable = skippable;
+		}
+
+		public void SetSpriteType(SpriteTypes newType)
+		{
+			Type = newType;
 		}
 	}
 }
