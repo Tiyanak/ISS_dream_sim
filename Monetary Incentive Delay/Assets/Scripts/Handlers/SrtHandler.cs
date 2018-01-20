@@ -79,6 +79,17 @@ namespace Assets.Scripts.Handlers
             mean /= valid;
             return mean;
         }
+
+	    public static int HowManyValid(double[] results)
+	    {
+		    int valid = 0;
+			foreach (var result in results)
+			{
+				if (result < 0) continue;
+				valid++;
+			}
+		    return valid;
+	    }
     }
 }
 

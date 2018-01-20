@@ -2,6 +2,7 @@
 using Assets.Scripts.DataTypes;
 using Assets.Scripts.Interfaces;
 using Assets.Scripts.Handlers;
+using Assets.Scripts.Handlers.GUI;
 using Assets.Scripts.Settings;
 using UnityEngine;
 using UnityEngine.UI;
@@ -196,8 +197,7 @@ namespace Assets.Scripts.Classes
 
 		private void DisplayInfo()
 		{
-			double mean = SrtHandler.GetMean(_reactionTimes);
-			string performance = OutputTextHandler.Performance(mean, _taskSettings.NumberOfTasks);
+			string performance = OutputTextHandler.HowManyValid(_reactionTimes);
 			_panel.GetComponentInChildren<Text>().text = performance;
 			_currentDisplayStatus = DisplayStatus.DisplayingInfo;
 			SendEndTaskMsg();

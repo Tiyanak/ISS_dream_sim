@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.SceneManagement;
 
-namespace Assets.Scripts.Handlers
+namespace Assets.Scripts.Handlers.GUI
 {
     public class GuiHandler : MonoBehaviour
     {
@@ -58,8 +58,7 @@ namespace Assets.Scripts.Handlers
 
 	    public void SaveSettings()
 	    {
-			//TaskSettings[] ts = null;	//TODO change this
-			//GlobalSettings.Gs.SetSettings(ts);
+			SettingsHandler.ApplyChanges();
 		    SettingsPanel.SetActive(false);
 	    }
 

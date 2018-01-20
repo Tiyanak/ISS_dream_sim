@@ -4,7 +4,7 @@ using JetBrains.Annotations;
 using UnityEngine;
 using Image = UnityEngine.UI.Image;
 
-namespace Assets.Scripts.Handlers
+namespace Assets.Scripts.Handlers.GUI
 {
 	public enum Position
 	{
@@ -31,12 +31,15 @@ namespace Assets.Scripts.Handlers
 	    [UsedImplicitly]
 		private void Awake()
         {
-            if(Sh != null)
-                Destroy(Sh);
-            else
-                Sh = this;
-         
-            DontDestroyOnLoad(this);
+	        if (Sh == null)
+	        {
+		        Sh = this;
+		        DontDestroyOnLoad(gameObject);
+	        }
+	        else
+	        {
+		        DestroyImmediate(gameObject);
+	        }
         }
         
         public GameObject CreateSprite(SpriteTypes spriteType, GameObject panel, Position position = Position.Middle)

@@ -20,18 +20,21 @@ namespace Assets.Scripts.Settings
 		[UsedImplicitly]
 		private void Awake()
 		{
-			if (Gs != null)
-				Destroy(Gs);
-			else
+			if (Gs == null)
+			{
 				Gs = this;
-
-			DontDestroyOnLoad(this);
+				DontDestroyOnLoad(gameObject);
+			}
+			else
+			{
+				DestroyImmediate(gameObject);
+			}
 		}
 
 		public GlobalSettings()
 		{
-			const int numberOfTasks = 10;
-			BaselineSettings = new BaselineSettings(4000, 10);
+			const int numberOfTasks = 40;
+			BaselineSettings = new BaselineSettings(4000, 20);
 			ControlSettings = new TaskSettings(3000, TaskType.Control, numberOfTasks, 0.8f);
 			RewardSettings = new TaskSettings(3000, TaskType.Reward, numberOfTasks, 0.8f);
 			PunishmentSettings = new TaskSettings(3000, TaskType.Punishment, numberOfTasks, 0.8f);

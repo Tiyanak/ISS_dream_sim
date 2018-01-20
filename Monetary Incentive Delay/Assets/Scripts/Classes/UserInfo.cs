@@ -1,6 +1,7 @@
 ﻿using System;
 using Assets.Scripts.DataTypes;
 using Assets.Scripts.Handlers;
+using Assets.Scripts.Handlers.GUI;
 using Assets.Scripts.Interfaces;
 using Assets.Scripts.Settings;
 using JetBrains.Annotations;

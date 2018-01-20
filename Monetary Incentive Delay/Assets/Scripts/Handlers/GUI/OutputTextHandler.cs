@@ -1,4 +1,4 @@
-﻿namespace Assets.Scripts.Handlers
+﻿namespace Assets.Scripts.Handlers.GUI
 {
     public static class OutputTextHandler
     {
@@ -20,5 +20,12 @@
             }
             return performance;
         }
+
+	    public static string HowManyValid(double[] reactionTimes)
+	    {
+		    int howManyValid = SrtHandler.HowManyValid(reactionTimes);
+			string howMany = "You achieved " + howManyValid + " out of " + reactionTimes.Length + " tasks.";
+		    return howMany;
+	    }
     }
 }

@@ -21,12 +21,15 @@ namespace Assets.Scripts.Handlers
 		[UsedImplicitly]
 		private void Awake()
 		{
-			if (Communicator != null)
-				Destroy(Communicator);
-			else
+			if (Communicator == null)
+			{
 				Communicator = this;
-
-			DontDestroyOnLoad(this);
+				DontDestroyOnLoad(gameObject);
+			}
+			else
+			{
+				DestroyImmediate(gameObject);
+			}
 		}
 
 		[UsedImplicitly]
