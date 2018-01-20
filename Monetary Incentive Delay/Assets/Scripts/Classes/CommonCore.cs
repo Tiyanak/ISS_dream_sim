@@ -111,12 +111,12 @@ namespace Assets.Scripts.Classes
 
 		public void Update()
 		{
-			_spacebarPressed = AntiSpamming.CheckForSpamming(_currentDisplayStatus);
+			_spacebarPressed = AntiSpamming.CheckForSpamming(_currentDisplayStatus, _spacebarPressed);
 			CheckSkipping();
 			_passedTime += Time.deltaTime * 1000;
 
 			double threshold = UnityClient.Communicator.HandleServerParams();
-			if (threshold != 0) {
+			if (Math.Abs(threshold) > float.Epsilon) {
 				_threshold = threshold;
 			}
 
@@ -199,7 +199,7 @@ namespace Assets.Scripts.Classes
 
 		private void DisplayInfo()
 		{
-			string performance = OutputTextHandler.HowManyValid(_reactionTimes);
+			string performance = OutputTextHandler.HowManyValid(_reactionTimes, _taskType, _threshold);
 			_panel.GetComponentInChildren<Text>().text = performance;
 			_currentDisplayStatus = DisplayStatus.DisplayingInfo;			
 		}

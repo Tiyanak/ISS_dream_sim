@@ -14,7 +14,7 @@ namespace Assets.Scripts.Handlers.GUI.Settings
 		private ISpriteTime _spriteTime;
 		private int _newValue;
 
-		public void Start()
+		public void OnEnable()
 		{
 			_spriteTime = GlobalSettings.Gs.SpriteSettings.GetTimeSettings(SpriteType);
 			switch (IntervalType)

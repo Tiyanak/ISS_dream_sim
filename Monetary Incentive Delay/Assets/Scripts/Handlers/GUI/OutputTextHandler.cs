@@ -21,11 +21,17 @@
             return performance;
         }
 
-	    public static string HowManyValid(double[] reactionTimes)
+	    public static string HowManyValid(double[] reactionTimes, int[] taskTypes, double threshold)
 	    {
-		    int howManyValid = SrtHandler.HowManyValid(reactionTimes);
-			string howMany = "You achieved " + howManyValid + " out of " + reactionTimes.Length + " tasks.";
-		    return howMany;
+		    int howManyIncentive;
+			int howManyNonincentive;
+		    int howManyValid = SrtHandler.HowManyValid(reactionTimes, threshold);
+			string howMany = "You achieved " + howManyValid + " / " + reactionTimes.Length + " tasks.";
+		    SrtHandler.HowManyOfIncentive(reactionTimes, taskTypes, threshold, out howManyValid, out howManyIncentive);
+		    howMany += "\nOf those are " + howManyValid + " / " + howManyIncentive + " incentive tasks, ";
+		    SrtHandler.HowManyOfNonincentive(reactionTimes, taskTypes, threshold, out howManyValid, out howManyNonincentive);
+		    howMany += "\nand " + howManyValid + " / " + howManyNonincentive + " nonincentive tasks.";
+			return howMany;
 	    }
     }
 }

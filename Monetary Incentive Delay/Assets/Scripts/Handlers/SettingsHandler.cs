@@ -11,10 +11,15 @@ namespace Assets.Scripts.Handlers
 		private static readonly List<Change> Changes = new List<Change>();
 		private static readonly List<Change> RedoChanges = new List<Change>();
 
+		public static void SetThreshold(int newValue)
+		{
+			Changes.Add(new Change(SettingsType.Threshold, newValue));
+		}
+
 		public static void SetBaselineField(SettingsType type, int newValue)
 		{
 			if (type != SettingsType.TaskNumber) return;
-			Changes.Add(new Change(newValue));
+			Changes.Add(new Change(type, newValue));
 		}
 
 		public static void SetTaskField(TaskType taskType, SettingsType type, int newValue)
@@ -54,36 +59,36 @@ namespace Assets.Scripts.Handlers
 				switch (change.SettingsType)
 				{
 					case SettingsType.WaitIntervalMin:
-						if (change.NewValue > waitInterval.MaxTime)
+						if (change.NewValue > waitInterval.MaxTime && !RedoChanges.Contains(change))
 							RedoChanges.Add(change);
-						else
+						else if (change.NewValue <= waitInterval.MaxTime)
 						{
 							int newValue = Mathf.Clamp(change.NewValue, 0, int.MaxValue);
 							GlobalSettings.Gs.SpriteSettings.GetTimeSettings(change.SpriteType).WaitInterval.SetMinTime(newValue);
 						}
 						break;
 					case SettingsType.WaitIntervalMax:
-						if (change.NewValue < waitInterval.MinTime)
+						if (change.NewValue < waitInterval.MinTime && !RedoChanges.Contains(change))
 							RedoChanges.Add(change);
-						else
+						else if(change.NewValue >= waitInterval.MinTime)
 						{
 							int newValue = Mathf.Clamp(change.NewValue, 0, int.MaxValue);
 							GlobalSettings.Gs.SpriteSettings.GetTimeSettings(change.SpriteType).WaitInterval.SetMaxTime(newValue);
 						}
 						break;
 					case SettingsType.DisplayIntervalMin:
-						if (change.NewValue > displayInterval.MaxTime)
+						if (change.NewValue > displayInterval.MaxTime && !RedoChanges.Contains(change))
 							RedoChanges.Add(change);
-						else
+						else if(change.NewValue <= displayInterval.MaxTime)
 						{
 							int newValue = Mathf.Clamp(change.NewValue, 0, int.MaxValue);
 							GlobalSettings.Gs.SpriteSettings.GetTimeSettings(change.SpriteType).DisplayInterval.SetMinTime(newValue);
 						}
 						break;
 					case SettingsType.DisplayIntervalMax:
-						if (change.NewValue < displayInterval.MinTime)
+						if (change.NewValue < displayInterval.MinTime && !RedoChanges.Contains(change))
 							RedoChanges.Add(change);
-						else
+						else if (change.NewValue >= displayInterval.MinTime)
 						{
 							int newValue = Mathf.Clamp(change.NewValue, 0, int.MaxValue);
 							GlobalSettings.Gs.SpriteSettings.GetTimeSettings(change.SpriteType).DisplayInterval.SetMaxTime(newValue);
@@ -102,12 +107,16 @@ namespace Assets.Scripts.Handlers
 						GlobalSettings.Gs.GetSettings(change.TaskChange).SetNumberOfTasks(newValue);
 						break;
 					case SettingsType.NonIncentivePercentage:
-						float newPercentage = Mathf.Clamp(change.NewValue, 0f, 100f)/100;
+						float newPercentage = Mathf.Clamp(change.NewValue, 50f, 100f)/100;
 						GlobalSettings.Gs.GetSettings(change.TaskChange).SetNonIncentivePercentage(newPercentage);
 						break;
 					default:
 						throw new ArgumentOutOfRangeException();
 				}
+			}
+			else if (change.IsThreshold)
+			{
+				
 			}
 		}
 	}

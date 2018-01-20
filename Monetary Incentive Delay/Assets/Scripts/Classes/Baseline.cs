@@ -74,7 +74,7 @@ namespace Assets.Scripts.Classes
 		[UsedImplicitly]
 		private void Update()
 		{
-			_spacebarPressed = AntiSpamming.CheckForSpamming(_currentDisplayStatus);
+			_spacebarPressed = AntiSpamming.CheckForSpamming(_currentDisplayStatus, _spacebarPressed);
 			CheckSkipping();
 			_passedTime += Time.deltaTime * 1000;
 

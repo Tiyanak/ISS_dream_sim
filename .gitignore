@@ -346,3 +346,6 @@ __pycache__/
 *.btm.cs
 *.odx.cs
 *.xsd.cs
+/Monetary Incentive Delay/Monetary Incentive Test_Data
+/Monetary Incentive Delay/Monetary Incentive Test.exe
+/Monetary Incentive Delay/UnityPlayer.dll

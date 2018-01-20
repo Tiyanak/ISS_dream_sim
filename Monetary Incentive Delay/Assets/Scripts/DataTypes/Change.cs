@@ -7,6 +7,7 @@ namespace Assets.Scripts.DataTypes
 		public bool IsBaseline { get; }
 		public bool IsTask { get; }
 		public bool IsSprite { get; }
+		public bool IsThreshold { get; }
 		public SpriteTypes SpriteType { get; }
 		public TaskType TaskChange { get; }
 		public SettingsType SettingsType { get; }
@@ -29,10 +30,21 @@ namespace Assets.Scripts.DataTypes
 		/// <summary>
 		/// Change of baseline task number
 		/// </summary>
+		/// <param name="type"></param>
 		/// <param name="newTaskNumber"></param>
-		public Change(int newTaskNumber)
+		public Change(SettingsType type, int newTaskNumber)
 		{
-			IsBaseline = true;
+			switch (type)
+			{
+				case SettingsType.TaskNumber:
+					IsBaseline = true;
+					break;
+				case SettingsType.Threshold:
+					IsThreshold = true;
+					break;
+				default:
+					throw new ArgumentOutOfRangeException(nameof(type), type, null);
+			}
 			NewValue = newTaskNumber;
 		}
 
@@ -58,6 +70,11 @@ namespace Assets.Scripts.DataTypes
 				default:
 					throw new ArgumentOutOfRangeException(nameof(type), type, "Not applicable type");
 			}
+		}
+
+		public Change()
+		{
+			
 		}
 	}
 }

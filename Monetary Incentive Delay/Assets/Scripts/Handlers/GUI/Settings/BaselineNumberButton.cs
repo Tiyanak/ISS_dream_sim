@@ -9,7 +9,7 @@ namespace Assets.Scripts.Handlers.GUI.Settings
 	{
 		private int _newValue;
 
-		public void Start()
+		public void OnEnable()
 		{
 			_newValue = GlobalSettings.Gs.BaselineSettings.NumberOfTasks;
 			ChangeInputFieldText(_newValue.ToString());

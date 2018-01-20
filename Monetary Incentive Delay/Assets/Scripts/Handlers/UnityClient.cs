@@ -12,7 +12,7 @@ namespace Assets.Scripts.Handlers
 		
 		public int Counter;
 		Client _client;
-		private long _taskId = 0;
+		private long _taskId;
 
 		public UnityClient()
 		{
@@ -22,13 +22,15 @@ namespace Assets.Scripts.Handlers
 		[UsedImplicitly]
 		private void Awake()
 		{
-			if (Communicator != null) {
-				Destroy(Communicator);
-			} else {
+			if (Communicator == null)
+			{
 				Communicator = this;
+				DontDestroyOnLoad(gameObject);
 			}
-
-			DontDestroyOnLoad(this);
+			else
+			{
+				DestroyImmediate(gameObject);
+			}
 		}
 
 		[UsedImplicitly]
@@ -68,7 +70,7 @@ namespace Assets.Scripts.Handlers
 			Classes.Msgs.Parameters recParams = null;
 			try {
 				string recMsg = _client.MsgListener();
-				if (recMsg == null || recMsg == "") return recParams;
+				if (string.IsNullOrEmpty(recMsg)) return null;
 				recParams = new Classes.Msgs.Parameters(recMsg); 
 			} catch (Exception) {
 				Debug.Log("Exceptin parsing params");
@@ -89,9 +91,9 @@ namespace Assets.Scripts.Handlers
             _client.Disconnect(_taskId.ToString());
         }
 
-		public void SendFeedback(TaskType taskType, bool incentive, double reactionTime, double _threshold)
+		public void SendFeedback(TaskType taskType, bool incentive, double reactionTime, double threshold)
         {
-            SendReaction(_taskId, 2, taskType, incentive, reactionTime, _threshold);
+            SendReaction(_taskId, 2, taskType, incentive, reactionTime, threshold);
         }
 
 		public double HandleServerParams()
@@ -102,17 +104,18 @@ namespace Assets.Scripts.Handlers
             Classes.Msgs.Parameters serverParams = ReceiveParameters();
             if (serverParams == null) return threshold;
 
-            switch (serverParams.msgType)
+            switch (serverParams.MsgType)
             {
                 case 0: // Started task - receive my task id
-                    _taskId = serverParams.taskId;
+                    _taskId = serverParams.TaskId;
                     break;
 
                 case 1: // Ended task - receive confirm msg from server about ending
                     break;
 
                 case 2: // Receive params from server
-                    threshold = serverParams.threshold;
+                    threshold = serverParams.Threshold;
+					SettingsHandler.SetThreshold((int) threshold);
                     break;
             }
 

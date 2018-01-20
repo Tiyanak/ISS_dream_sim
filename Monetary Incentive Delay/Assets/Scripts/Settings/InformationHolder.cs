@@ -73,7 +73,7 @@ namespace Assets.Scripts.Settings
 			new InformationNugget("After these cues you may expect a target box to apprear.", DisplayStatus.DisplayingInfo, -1, true, SpriteTypes.Target),
 			new InformationNugget("Your reaction time is measured after the TARGET box appears.", DisplayStatus.DisplayingInfo, -1, true),
 			new InformationNugget("Press space to begin", DisplayStatus.WaitingUserInput, -1, true),
-			new InformationNugget("", DisplayStatus.WaitToDisplaySprite, -1, false),
+			new InformationNugget("", DisplayStatus.WaitToDisplaySprite, 5000, false),
 			new InformationNugget("Great. Now onto the next task.", DisplayStatus.GoToNextScene, -1, false)
 		};
 
@@ -105,7 +105,7 @@ namespace Assets.Scripts.Settings
 			new InformationNugget("After these cues you may expect a target box to apprear.", DisplayStatus.DisplayingInfo, -1, true, SpriteTypes.Target),
 			new InformationNugget("Your reaction time is measured after the TARGET box appears.", DisplayStatus.DisplayingInfo, -1, true),
 			new InformationNugget("Press space to begin", DisplayStatus.WaitingUserInput, -1, true),
-			new InformationNugget("", DisplayStatus.WaitToDisplaySprite, -1, false),
+			new InformationNugget("", DisplayStatus.WaitToDisplaySprite, 5000, false),
 			new InformationNugget("That's it. You finished the tasks successfully. Congratulations", DisplayStatus.GoToMainMenu, -1, false)
 		};
 
@@ -137,7 +137,7 @@ namespace Assets.Scripts.Settings
 			new InformationNugget("After these cues you may expect a target box to apprear.", DisplayStatus.DisplayingInfo, -1, true, SpriteTypes.Target),
 			new InformationNugget("Your reaction time is measured after the TARGET box appears.", DisplayStatus.DisplayingInfo, -1, true),
 			new InformationNugget("Press space to begin", DisplayStatus.WaitingUserInput, -1, true),
-			new InformationNugget("", DisplayStatus.WaitToDisplaySprite, -1, false),
+			new InformationNugget("", DisplayStatus.WaitToDisplaySprite, 5000, false),
 			new InformationNugget("That's it. You finished the tasks successfully. Congratulations", DisplayStatus.GoToMainMenu, -1, false)
 		};
 

@@ -12,7 +12,7 @@ namespace Assets.Scripts.Handlers.GUI.Settings
 		public TaskType Type;
 		private int _newValue;
 
-		public void Start()
+		public void OnEnable()
 		{
 			_taskSettings = GlobalSettings.Gs.GetSettings(Type);
 			_newValue = _taskSettings.NumberOfTasks;

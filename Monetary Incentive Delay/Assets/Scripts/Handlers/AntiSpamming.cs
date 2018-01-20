@@ -6,18 +6,18 @@ namespace Assets.Scripts.Handlers
 {
     public static class AntiSpamming
     {
-        private static List<double> _spamCounter = new List<double>();
+        private static readonly List<double> SpamCounter = new List<double>();
 		private static bool _resetFlag;
 
-        public static bool CheckForSpamming(DisplayStatus currentDisplayStatus)
+        public static bool CheckForSpamming(DisplayStatus currentDisplayStatus, bool spacebarHolding)
         {
 	        if (_resetFlag)
 		        Clear();
             bool spacebarPressed = CheckIfSpacebarPressed();
-            if (spacebarPressed && (currentDisplayStatus == DisplayStatus.DisplayingSprite ||
+            if (spacebarPressed && !spacebarHolding && (currentDisplayStatus == DisplayStatus.DisplayingSprite ||
                                      currentDisplayStatus == DisplayStatus.WaitToDisplaySprite))
             {
-                _spamCounter.Add(TimeHandler.GetMilliseconds());
+                SpamCounter.Add(TimeHandler.GetMilliseconds());
             }
             return spacebarPressed;
         }
@@ -26,18 +26,19 @@ namespace Assets.Scripts.Handlers
         {
 	        _resetFlag = true;
             int littleTime = 0;
-            for (int i = 1; i < _spamCounter.Count; i++)
+            for (int i = 1; i < SpamCounter.Count; i++)
             {			
-                if (_spamCounter[i] - _spamCounter[i - 1] < 200)
+                if (SpamCounter[i] - SpamCounter[i - 1] < 200)
                     littleTime++;
             }
             double percentage = (double) littleTime / numberOfTasks;
-            return _spamCounter.Count > 2 * numberOfTasks || percentage > 0.3;
+            return SpamCounter.Count > 2 * numberOfTasks || percentage > 0.3;
         }
 
         private static void Clear()
         {
-            _spamCounter.Clear();
+			_resetFlag = false;
+            SpamCounter.Clear();
         }
 
         private static bool CheckIfSpacebarPressed()

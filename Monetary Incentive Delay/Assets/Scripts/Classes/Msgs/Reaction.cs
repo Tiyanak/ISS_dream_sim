@@ -8,42 +8,42 @@ namespace Assets.Scripts.Classes.Msgs
     public class Reaction
     {
 
-       public long taskId;
-        public int msgType;
-        public string taskType;
-        public bool incentive;
-        public double reactionTime;
-        public double threshold;
+       public readonly long TaskId;
+        public readonly int MsgType;
+        public readonly string TaskType;
+        public readonly bool Incentive;
+        public readonly double ReactionTime;
+        public readonly double Threshold;
 
         public Reaction() { }
 
         public Reaction(long taskId, int msgType, string taskType, bool incentive, double reactionTime, double threshold)
         {
-            this.taskId = taskId;
-            this.msgType = msgType;
-            this.taskType = taskType;
-            this.incentive = incentive;
-            this.reactionTime = reactionTime;
-            this.threshold = threshold;
+            TaskId = taskId;
+            MsgType = msgType;
+            TaskType = taskType;
+            Incentive = incentive;
+            ReactionTime = reactionTime;
+            Threshold = threshold;
         }
 
         public Reaction(string serializedData)
         {
-            Reaction desData = this.Deserialize(serializedData);
+            Reaction desData = Deserialize(serializedData);
 
-            this.taskId = desData.taskId;
-            this.msgType = desData.msgType;
-            this.taskType = desData.taskType;
-            this.incentive = desData.incentive;
-            this.reactionTime = desData.reactionTime;
-            this.threshold = desData.threshold;
+            TaskId = desData.TaskId;
+            MsgType = desData.MsgType;
+            TaskType = desData.TaskType;
+            Incentive = desData.Incentive;
+            ReactionTime = desData.ReactionTime;
+            Threshold = desData.Threshold;
 
         }
 
         public string Serialize()
         {
 
-            string serializedData = string.Empty;
+            string serializedData;
 
             XmlSerializer serializer = new XmlSerializer(typeof(Reaction));
             using (StringWriter sw = new StringWriter())
@@ -58,7 +58,7 @@ namespace Assets.Scripts.Classes.Msgs
         public Reaction Deserialize(string serializedData)
         {
 
-            Reaction deserializedReaction = new Reaction();
+            Reaction deserializedReaction;
 
             XmlSerializer deserializer = new XmlSerializer(typeof(Reaction));
             using (TextReader tr = new StringReader(serializedData))
@@ -71,42 +71,42 @@ namespace Assets.Scripts.Classes.Msgs
 
         public override string ToString()
         {
-            return "Id: " + this.taskId.ToString() +
-                "; MsgType: " + this.msgType.ToString() +
-                "; Task: " + this.taskType +
-                "; Incentive: " + this.incentive.ToString() +
-                "; Reaction time: " + this.reactionTime.ToString() +
-                "; Threshold: " + this.threshold.ToString();
+            return "Id: " + TaskId +
+                "; MsgType: " + MsgType +
+                "; Task: " + TaskType +
+                "; Incentive: " + Incentive +
+                "; Reaction time: " + ReactionTime +
+                "; Threshold: " + Threshold;
         }
 
-        public string getFieldsCSV()
+        public string GetFieldsCsv()
         {
             return "Id,MsgType,Task,Incentive,ReactionTime,Threshold";
         }
 
-        public string getFieldsSemiCSV()
+        public string GetFieldsSemiCsv()
         {
             return "Id;MsgType;Task;Incentive;ReactionTime;Threshold";
         }
 
-        public string toCSV()
+        public string ToCsv()
         {
-            return this.taskId.ToString() +
-                "," + this.msgType.ToString() +
-                "," + this.taskType +
-                "," + this.incentive.ToString() +
-                "," + this.reactionTime.ToString() +
-                "," + this.threshold.ToString();
+	        return TaskId +
+	               "," + MsgType +
+	               "," + TaskType +
+	               "," + Incentive +
+	               "," + ReactionTime +
+	               "," + Threshold;
         }
 
-        public string toSemiCSV()
+        public string ToSemiCsv()
         {
-            return this.taskId.ToString() +
-                ";" + this.msgType.ToString() +
-                ";" + this.taskType +
-                ";" + this.incentive.ToString() +
-                ";" + this.reactionTime.ToString() +
-                ";" + this.threshold.ToString();
+            return TaskId +
+                ";" + MsgType +
+                ";" + TaskType +
+                ";" + Incentive +
+                ";" + ReactionTime +
+                ";" + Threshold;
         }
     }
 }
