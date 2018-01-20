@@ -141,6 +141,7 @@ namespace Assets.Scripts.Classes
 			GlobalSettings.Gs?.UpdateThreshold(_threshold);
 			_currentDisplayStatus = AntiSpamming.DidHeSpam(_baselineSettings.NumberOfTasks) || !(mean < double.MaxValue) 
 				? DisplayStatus.GoToMainMenu : DisplayStatus.DisplayingInfo;
+			UnityClient.Communicator.Connect();
 		}
 
 		private void HandleUserInput()

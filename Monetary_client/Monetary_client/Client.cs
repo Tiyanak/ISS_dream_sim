@@ -24,28 +24,22 @@ namespace Monetary_client
         }
 
 
-        public void Connect(string host, int port)
+        public void Connect(string host, int port, string hailMsgString)
         {
             if (this.client != null)
             {
                 this.client.Start();
 
                 NetOutgoingMessage hailMsg = this.client.CreateMessage();
-                hailMsg.Write("Hello!");
+                hailMsg.Write(hailMsgString);
                 NetConnection clientConnection = this.client.Connect(host, port, hailMsg);
                 Console.WriteLine("Client connected.");
 
                 Thread.Sleep(1000);
-
-                MsgListener();
+                
             }
         }
-
-        public void Disconnect()
-        {
-            this.client.Disconnect("Goodbye from client");
-        }
-
+        
         public string MsgListener()
         {
             string recMsg = null;
@@ -92,6 +86,11 @@ namespace Monetary_client
             NetOutgoingMessage outMsg = this.client.CreateMessage();
             outMsg.Write(msg);
             NetSendResult sendResult = this.client.SendMessage(outMsg, NetDeliveryMethod.ReliableOrdered);          
+        }
+
+        public void Disconnect(string byeMsg)
+        {
+            this.client.Disconnect(byeMsg);
         }
 
     }

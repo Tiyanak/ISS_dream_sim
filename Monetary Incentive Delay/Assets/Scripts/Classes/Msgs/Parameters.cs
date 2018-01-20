@@ -7,37 +7,37 @@ namespace Assets.Scripts.Classes.Msgs
     [Serializable]
     public class Parameters
     {
-        public long TaskId;
-        public int MsgType;
-        public double TargetDisplayTime;
-        public double CueToTargetTime;
-        public double Threshold;
+        public long taskId;
+        public int msgType;
+        public double targetDisplayTime;
+        public double cueToTargetTime;
+        public double threshold;
 
         public Parameters() { }
 
         public Parameters(long taskId, int msgType, double targetDisplayTime, double cueToTargetTime, double threshold)
         {
-            TaskId = taskId;
-            MsgType = msgType;
-            TargetDisplayTime = targetDisplayTime;
-            CueToTargetTime = cueToTargetTime;
-            Threshold = threshold;
+            this.taskId = taskId;
+            this.msgType = msgType;
+            this.targetDisplayTime = targetDisplayTime;
+            this.cueToTargetTime = cueToTargetTime;
+            this.threshold = threshold;
         }
 
         public Parameters(string serializedData)
         {
-            Parameters des = Deserialize(serializedData);
+            Parameters des = (Parameters)this.Deserialize(serializedData);
 
-            TaskId = des.TaskId;
-            MsgType = des.MsgType;
-            TargetDisplayTime = des.TargetDisplayTime;
-            CueToTargetTime = des.CueToTargetTime;
-            Threshold = des.Threshold;
+            this.taskId = des.taskId;
+            this.msgType = des.msgType;
+            this.targetDisplayTime = des.targetDisplayTime;
+            this.cueToTargetTime = des.cueToTargetTime;
+            this.threshold = des.threshold;
         }
 
         public string Serialize()
         {
-            string serializedData;
+            string serializedData = string.Empty;
 
             XmlSerializer serializer = new XmlSerializer(typeof(Parameters));
             using (StringWriter sw = new StringWriter())
@@ -49,9 +49,9 @@ namespace Assets.Scripts.Classes.Msgs
             return serializedData;
         }
 
-        public static Parameters Deserialize(string serializedData)
+        public Parameters Deserialize(string serializedData)
         {
-            Parameters deserializedparameters;
+            Parameters deserializedparameters = new Parameters();
 
             XmlSerializer deserializer = new XmlSerializer(typeof(Parameters));
             using (TextReader tr = new StringReader(serializedData))
@@ -64,11 +64,11 @@ namespace Assets.Scripts.Classes.Msgs
 
         public override string ToString()
         {
-            return "TaskId: " + TaskId +
-                "; MsgType: " + MsgType +
-                "; TargetDisplayTime: " + TargetDisplayTime.ToString("#.0") +
-                "; CueToTargetTime: " + CueToTargetTime.ToString("#.0") +
-                "; Threshold: " + Threshold.ToString("#.0");
+            return "TaskId: " + this.taskId.ToString() +
+                "; MsgType: " + this.msgType.ToString() +
+                "; TargetDisplayTime: " + this.targetDisplayTime.ToString() +
+                "; CueToTargetTime: " + this.cueToTargetTime.ToString() +
+                "; Threshold: " + this.threshold.ToString();
         }
 
     }
