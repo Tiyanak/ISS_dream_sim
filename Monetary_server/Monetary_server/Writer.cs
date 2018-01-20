@@ -25,16 +25,21 @@ namespace Monetary_server
             openFile(path);
         }
 
-        public void openFile(string path)
+        public void openFile(string filename)
         {
-            if (File.Exists(path))
+
+            string resultDir = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile) + Path.DirectorySeparatorChar + "monetary_results";
+            string filePath = resultDir + Path.DirectorySeparatorChar + filename;
+            if (File.Exists(filePath))
             {
-                this.fileWriter = new StreamWriter(path, true);
+                this.fileWriter = new StreamWriter(filePath, true);
             } else
             {
-                this.fileWriter = new StreamWriter(File.Create(path));
-            }
-            
+                if (!Directory.Exists(resultDir)) {
+                    Directory.CreateDirectory(resultDir);
+                }
+                this.fileWriter = new StreamWriter(File.Create(filePath));
+            }   
         }
 
         public void writeLine(string line)

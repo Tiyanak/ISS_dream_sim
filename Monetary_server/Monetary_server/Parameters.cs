@@ -30,7 +30,7 @@ namespace Monetary_server
 
         public Parameters(string serializedData)
         {
-            Parameters des = (Parameters)this.deserialize(serializedData);
+            Parameters des = (Parameters)this.Deserialize(serializedData);
 
             this.taskId = des.taskId;
             this.msgType = des.msgType;
@@ -39,7 +39,7 @@ namespace Monetary_server
             this.threshold = des.threshold;
         }
 
-        public string serialize()
+        public string Serialize()
         {
             string serializedData = string.Empty;
 
@@ -53,7 +53,7 @@ namespace Monetary_server
             return serializedData;
         }
 
-        public Parameters deserialize(string serializedData)
+        public Parameters Deserialize(string serializedData)
         {
             Parameters deserializedparameters = new Parameters();
 

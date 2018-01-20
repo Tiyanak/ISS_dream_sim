@@ -12,6 +12,7 @@ namespace Assets.Scripts.Handlers
 		
 		public int Counter;
 		Client _client;
+		private long _taskId = 0;
 
 		public UnityClient()
 		{
@@ -21,15 +22,13 @@ namespace Assets.Scripts.Handlers
 		[UsedImplicitly]
 		private void Awake()
 		{
-			if (Communicator == null)
-			{
+			if (Communicator != null) {
+				Destroy(Communicator);
+			} else {
 				Communicator = this;
-				DontDestroyOnLoad(gameObject);
 			}
-			else
-			{
-				DestroyImmediate(gameObject);
-			}
+
+			DontDestroyOnLoad(this);
 		}
 
 		[UsedImplicitly]
@@ -41,8 +40,15 @@ namespace Assets.Scripts.Handlers
 		[UsedImplicitly]
 		void SetupClient()
 		{
-			_client = new Client();
-			_client.Connect("127.0.0.1", 11111);
+			_client = new Client();				
+		}
+
+		public void Connect() {
+			_client.Connect("127.0.0.1", 11111, GetStartTaskMsg());
+		}
+
+		public void Disconnect() {
+			SendEndTaskMsg();
 		}
 
 		[UsedImplicitly]
@@ -61,15 +67,57 @@ namespace Assets.Scripts.Handlers
 		{
 			Classes.Msgs.Parameters recParams = null;
 			try {
-				recParams = new Classes.Msgs.Parameters(_client.MsgListener()); 
-				print("Serialized params: " + recParams);
+				string recMsg = _client.MsgListener();
+				if (recMsg == null || recMsg == "") return recParams;
+				recParams = new Classes.Msgs.Parameters(recMsg); 
 			} catch (Exception) {
-				print("Could not deserialize server data to class Parameters.");
+				Debug.Log("Exceptin parsing params");
 			} 
 		
 			return recParams;
 
 		}
+
+		private string GetStartTaskMsg()
+        {
+            return new Classes.Msgs.Reaction(0, 0, "HELLO", false, 0, 0).Serialize();
+        }
+
+		public void SendEndTaskMsg()
+        {
+			SendReaction(_taskId, 1, TaskType.Control, false, 0, 0);
+            _client.Disconnect(_taskId.ToString());
+        }
+
+		public void SendFeedback(TaskType taskType, bool incentive, double reactionTime, double _threshold)
+        {
+            SendReaction(_taskId, 2, taskType, incentive, reactionTime, _threshold);
+        }
+
+		public double HandleServerParams()
+        {
+
+			double threshold = 0;
+
+            Classes.Msgs.Parameters serverParams = ReceiveParameters();
+            if (serverParams == null) return threshold;
+
+            switch (serverParams.msgType)
+            {
+                case 0: // Started task - receive my task id
+                    _taskId = serverParams.taskId;
+                    break;
+
+                case 1: // Ended task - receive confirm msg from server about ending
+                    break;
+
+                case 2: // Receive params from server
+                    threshold = serverParams.threshold;
+                    break;
+            }
+
+			return threshold;
+        }
 	}
 }
 

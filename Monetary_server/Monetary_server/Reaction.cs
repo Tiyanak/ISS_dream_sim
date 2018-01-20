@@ -33,7 +33,7 @@ namespace Monetary_server
 
         public Reaction(string serializedData)
         {
-            Reaction desData = this.deserialize(serializedData);
+            Reaction desData = this.Deserialize(serializedData);
 
             this.taskId = desData.taskId;
             this.msgType = desData.msgType;
@@ -44,7 +44,7 @@ namespace Monetary_server
 
         }
 
-        public string serialize()
+        public string Serialize()
         {
 
             string serializedData = string.Empty;
@@ -59,7 +59,7 @@ namespace Monetary_server
             return serializedData;
         }
 
-        public Reaction deserialize(string serializedData)
+        public Reaction Deserialize(string serializedData)
         {
 
             Reaction deserializedReaction = new Reaction();

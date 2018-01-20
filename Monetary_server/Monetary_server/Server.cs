@@ -18,10 +18,12 @@ namespace Monetary_server
         NetIncomingMessage msg;
         int port = 11111;
         private Dictionary<long, Writer> writers;
+        private Dictionary<long, List<double>> reactions;
 
         public Server()
         {
             this.writers = new Dictionary<long, Writer>();
+            this.reactions = new Dictionary<long, List<double>>();
             this.config = new NetPeerConfiguration("MonetaryTest") { Port = this.port };
             this.server = new NetServer(this.config);           
         }
@@ -59,24 +61,24 @@ namespace Monetary_server
                             string data = msg.ReadString();
                             NetConnection clientConnection = msg.SenderConnection;
                             string clientId = msg.SenderConnection.RemoteUniqueIdentifier.ToString();
-
+                            
                             try
                             {
                                 Reaction r = new Reaction(data);
-                                data = r.ToString();
-                                try {
-                                    HandleReaction(r, clientConnection);
-                                } catch (Exception e)
+                                Console.WriteLine("Reaction: " + r.ToString());
+
+                                if (r.msgType == 1)
                                 {
-                                    Console.WriteLine("Exception while handling received REACTION from client!");
+                                    OnDisconnected(r, clientConnection);
+                                } else
+                                {
+                                    OnData(r, clientConnection);
                                 }
                             } catch (Exception e)
                             {
                                 Console.WriteLine("Cant deserialize that.");
                             }
-
-                            Console.WriteLine("Received msg: " + data);
-                           
+                            
                             break;
 
                         case NetIncomingMessageType.StatusChanged:
@@ -90,12 +92,20 @@ namespace Monetary_server
 
                                     Console.WriteLine("Client connected: " + clientConnectedId + " : " + hailMessage);
 
+                                    try
+                                    {
+                                        OnConnected(new Reaction(hailMessage), msg.SenderConnection);
+                                    } catch (Exception e)
+                                    {
+                                        Console.WriteLine("Exception parsing Hail Reaction!");
+                                    }
+                                 
                                     break;
 
                                 case NetConnectionStatus.Disconnected:
 
-                                    string clientDisconnectedId = msg.SenderConnection.RemoteUniqueIdentifier.ToString();
                                     string goodByeMsg = msg.ReadString();
+                                    string clientDisconnectedId = msg.SenderConnection.RemoteUniqueIdentifier.ToString();
 
                                     Console.WriteLine("Client disconnected: " + clientDisconnectedId + " : " + goodByeMsg);
 
@@ -124,40 +134,37 @@ namespace Monetary_server
             }            
         }
 
-        private void HandleReaction(Reaction reaction, NetConnection clientConnection)
+        private void OnConnected(Reaction reaction, NetConnection clientConnection)
         {
+            long id = GetMilliseconds();
+            string filename = id.ToString() + ".csv";
 
-            switch (reaction.msgType)
-            {
-                case 0: // start task
-                    long id = GetMilliseconds();
-                    string path = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile) + "\\Desktop\\monetary_" + reaction.taskType + "_" + id.ToString() + ".csv";
-                    Writer writer = new Writer(path);
-                    writer.writeLine(reaction.getFieldsSemiCSV());
-                    this.writers[id] = writer;
-                    SendMsg(new Parameters(id, 0, 200, 200, 200).serialize(), clientConnection);
-                    break;
+            this.writers[id] = new Writer(filename);
+            this.reactions[id] = new List<double>();
 
-                case 1: // end task
-                    this.writers[reaction.taskId].closeFile();
-                    break;
+            this.writers[id].writeLine(reaction.getFieldsSemiCSV());
 
-                case 2: // reaction msg
-                    this.writers[reaction.taskId].writeLine(reaction.toSemiCSV());
-                    // izracun parametara iz reakcije igraca sa strane klijenta
-                    double targetDisplayTime = 0;
-                    double cueToTargetTime = 0;
-                    double threshold = 0;
-                    SendMsg(new Parameters(reaction.taskId, 2, targetDisplayTime, cueToTargetTime, threshold).serialize(), clientConnection);
-
-                    break;
-
-                default:                   
-                    break;
-            }
-
+            string conParams = new Parameters(id, 0, 0, 0, 0).Serialize();
+            SendMsg(conParams, clientConnection);
+            
         }
 
+        private void OnDisconnected(Reaction reaction, NetConnection clientConnection)
+        {
+            this.writers[reaction.taskId].closeFile();
+            this.writers.Remove(reaction.taskId);
+            this.reactions.Remove(reaction.taskId);
+        }
+
+        private void OnData(Reaction reaction, NetConnection clientConnection)
+        {
+            this.writers[reaction.taskId].writeLine(reaction.toSemiCSV());
+            this.reactions[reaction.taskId].Add(reaction.reactionTime);
+
+            double newThreshold = GaussHandler.GetAcceptableReationTime(this.reactions[reaction.taskId]);
+            SendMsg(new Parameters(reaction.taskId, 2, 0, 0, newThreshold).Serialize(), clientConnection);
+        }
+        
         public static long GetMilliseconds()
         {
             DateTime dt1970 = new DateTime(1970, 1, 1);

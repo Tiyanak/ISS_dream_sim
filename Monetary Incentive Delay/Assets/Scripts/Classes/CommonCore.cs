@@ -18,7 +18,6 @@ namespace Assets.Scripts.Classes
 		private readonly IInformationHolder _informationHolder;
 		private DisplayStatus _currentDisplayStatus;
 		private InformationNugget _currentInfo;
-		private long _taskId;
 
 		private float _passedTime;
 		private double[] _reactionTimes;
@@ -81,7 +80,6 @@ namespace Assets.Scripts.Classes
 			SetPanels(panel, rewardPanel, punishmentPanel);
 			GetInformation();
 			InitValues();
-			SendStartTaskMsg();
 		}
 
 		private void SetPanels(GameObject panel, GameObject rewardPanel, GameObject punishmentPanel)
@@ -117,7 +115,10 @@ namespace Assets.Scripts.Classes
 			CheckSkipping();
 			_passedTime += Time.deltaTime * 1000;
 
-			HandleServerParams();
+			double threshold = UnityClient.Communicator.HandleServerParams();
+			if (threshold != 0) {
+				_threshold = threshold;
+			}
 
 			switch (_currentDisplayStatus)
 			{
@@ -175,14 +176,15 @@ namespace Assets.Scripts.Classes
 					}
 					break;
 				case DisplayStatus.GoToMainMenu:
-					if (_passedTime > _taskSettings.InfoTime)
+					if (_passedTime > _taskSettings.InfoTime){
+						UnityClient.Communicator.Disconnect();			
 						GuiHandler.GoToMainMenu();
+					}
 					break;
 				case DisplayStatus.GoToNextScene:
 					limit = _currentInfo.DisplayTime != -1 ? _currentInfo.DisplayTime : _taskSettings.InfoTime;
 					if (_passedTime > limit)
 					{
-						SendEndTaskMsg();
 						if (Randomness.Rand.NextDouble() < 0.5)
 							_punishmentPanel.SetActive(true);
 						else
@@ -199,19 +201,22 @@ namespace Assets.Scripts.Classes
 		{
 			string performance = OutputTextHandler.HowManyValid(_reactionTimes);
 			_panel.GetComponentInChildren<Text>().text = performance;
-			_currentDisplayStatus = DisplayStatus.DisplayingInfo;
-			SendEndTaskMsg();
+			_currentDisplayStatus = DisplayStatus.DisplayingInfo;			
 		}
 
 		private void HandleUserInput()
 		{
+			bool isIncentive = _taskType[(_iSprite - 1) / 3] != 0;
+			
 			if (!_spacebarPressed) return;
 			if (_iSprite < 1 || !(_reactionTimes[(_iSprite - 1) / 3] < 0)) return;
+			
 			SpriteTypes type = SpriteTypes.Correct;
 			_reactionTimes[(_iSprite - 1) / 3] = _passedTime;
-			if (_passedTime > _threshold)
-				type = SpriteTypes.Incorrect;
-			if (_taskType[(_iSprite - 1) / 3] == 0) {
+			
+			if (_passedTime > _threshold) type = SpriteTypes.Incorrect;
+			
+			if (!isIncentive) {
 				_taskSettings.NonIncentiveOrder[2] = type;
 				SendFeedback(_passedTime, false);
 			} else {
@@ -249,40 +254,10 @@ namespace Assets.Scripts.Classes
 			_passedTime = 100000;
 		}
 
-		private void SendStartTaskMsg()
-        {
-            UnityClient.Communicator.SendReaction(0, 0, _myType, false, 0, _threshold);
-        }
-
-        private void SendEndTaskMsg()
-        {
-            UnityClient.Communicator.SendReaction(_taskId, 1, _myType, false, 0, _threshold);
-        }
-
         private void SendFeedback(double reactionTime, bool incentive)
         {
-            UnityClient.Communicator.SendReaction(_taskId, 2, _myType, incentive, reactionTime, _threshold);
+            UnityClient.Communicator.SendFeedback(_myType, incentive, reactionTime, _threshold);
         }
 
-        private void HandleServerParams()
-        {
-
-			Msgs.Parameters serverParams = UnityClient.Communicator.ReceiveParameters();
-			if (serverParams == null) return;
-
-            switch (serverParams.MsgType)
-            {
-                case 0: // Started task - receive my task id
-                    _taskId = serverParams.TaskId;
-					Debug.Log("MANAGE TO READ TASK ID!");
-                    break;
-
-                case 1: // Ended task - receive confirm msg from server about ending
-                    break;
-
-                case 2: // Receive params from server
-                    break;
-            }
-        }
 	}
 }
