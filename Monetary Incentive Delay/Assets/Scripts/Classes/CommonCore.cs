@@ -30,10 +30,13 @@ namespace Assets.Scripts.Classes
 		private GameObject _panel;
 		private GameObject _rewardPanel;
 		private GameObject _punishmentPanel;
+		private GameObject _spammingText; 
 
 		private int _iSprite;
 		private bool _spacebarPressed;
 		private bool _allowedSkipping;
+		private int _numberOfSpamming;
+		private static double _timeOfSpamming;
 
 		public CommonCore(TaskType myType)
 		{
@@ -54,7 +57,7 @@ namespace Assets.Scripts.Classes
 			}
 		}
 
-		public void Start(GameObject panel, GameObject rewardPanel, GameObject punishmentPanel)
+		public void Start(GameObject panel, GameObject rewardPanel, GameObject punishmentPanel, GameObject spammingText)
 		{
 			if (GlobalSettings.Gs == null)
 				GuiHandler.GoToMainMenu();
@@ -77,16 +80,17 @@ namespace Assets.Scripts.Classes
 				_spriteSettings = GlobalSettings.Gs.SpriteSettings;
 				_threshold = GlobalSettings.Gs.Threshold;
 			}
-			SetPanels(panel, rewardPanel, punishmentPanel);
+			SetPanels(panel, rewardPanel, punishmentPanel, spammingText);
 			GetInformation();
 			InitValues();
 		}
 
-		private void SetPanels(GameObject panel, GameObject rewardPanel, GameObject punishmentPanel)
+		private void SetPanels(GameObject panel, GameObject rewardPanel, GameObject punishmentPanel, GameObject spammingText)
 		{
 			_panel = panel;
 			_rewardPanel = rewardPanel;
 			_punishmentPanel = punishmentPanel;
+			_spammingText = spammingText;
 		}
 
 		private void GetInformation()
@@ -107,6 +111,7 @@ namespace Assets.Scripts.Classes
 				_reactionTimes[i] = -1;
 			_iSprite = -1;
 			_passedTime = 0;
+			_numberOfSpamming = 0;
 		}
 
 		public void Update()
@@ -206,9 +211,10 @@ namespace Assets.Scripts.Classes
 
 		private void HandleUserInput()
 		{
+			RemoveNotification();
 			bool isIncentive = _taskType[(_iSprite - 1) / 3] != 0;
-			
-			if (!_spacebarPressed) return;
+			if (!_spacebarPressed || _iSprite < 1) return;
+			CheckSpamming();
 			if (_iSprite < 1 || !(_reactionTimes[(_iSprite - 1) / 3] < 0)) return;
 			
 			SpriteTypes type = SpriteTypes.Correct;
@@ -259,5 +265,28 @@ namespace Assets.Scripts.Classes
             UnityClient.Communicator.SendFeedback(_myType, incentive, reactionTime, _threshold);
         }
 
+		private void CheckSpamming()
+		{
+			bool spamming = AntiSpamming.SoftCheck((_iSprite - 1) / 3);
+			if (spamming && _spammingText.gameObject.activeInHierarchy == false)
+				ShowNotification();
+		}
+
+		private void ShowNotification()
+		{
+			if (++_numberOfSpamming >= 3)
+				_currentDisplayStatus = DisplayStatus.GoToMainMenu;
+			else
+			{
+				_timeOfSpamming = TimeHandler.GetMilliseconds();
+				_spammingText.gameObject.SetActive(true);
+			}
+		}
+
+		private void RemoveNotification()
+		{
+			if(_spammingText.gameObject.activeInHierarchy && TimeHandler.GetMilliseconds() - _timeOfSpamming >= _taskSettings.InfoTime)
+				_spammingText.gameObject.SetActive(false);
+		}
 	}
 }

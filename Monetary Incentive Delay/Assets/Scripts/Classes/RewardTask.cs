@@ -7,6 +7,7 @@ namespace Assets.Scripts.Classes
 	public class RewardTask : MonoBehaviour
 	{
 		private readonly CommonCore _core;
+		public GameObject SpammingText;
 
 		public RewardTask()
 		{
@@ -16,7 +17,7 @@ namespace Assets.Scripts.Classes
 		[UsedImplicitly]
 		private void Start()
 		{
-			_core.Start(gameObject, null, null);
+			_core.Start(gameObject, null, null, SpammingText);
 		}
 
 		[UsedImplicitly]

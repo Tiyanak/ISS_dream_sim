@@ -9,6 +9,7 @@ namespace Assets.Scripts.Classes
 		private readonly CommonCore _core;
 		public GameObject RewardPanel;
 		public GameObject PunishmentPanel;
+		public GameObject SpammingText;
 
 		public ControlTask()
 		{
@@ -17,7 +18,7 @@ namespace Assets.Scripts.Classes
 
 		[UsedImplicitly]
 		private void Start() {
-			_core.Start(gameObject, RewardPanel, PunishmentPanel);
+			_core.Start(gameObject, RewardPanel, PunishmentPanel, SpammingText);
 		}
 	
 		[UsedImplicitly]

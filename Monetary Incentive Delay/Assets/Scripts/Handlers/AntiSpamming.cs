@@ -22,17 +22,22 @@ namespace Assets.Scripts.Handlers
             return spacebarPressed;
         }
 
+	    public static bool SoftCheck(int currentTask)
+	    {
+			int littleTime = 0;
+		    for (int i = 1; i < SpamCounter.Count; i++)
+		    {
+			    if (SpamCounter[i] - SpamCounter[i - 1] < 200)
+				    littleTime++;
+		    }
+		    double percentage = (double)littleTime / currentTask;
+		    return SpamCounter.Count > 2 * currentTask || percentage > 0.3;
+		}
+
         public static bool DidHeSpam(int numberOfTasks)
         {
 	        _resetFlag = true;
-            int littleTime = 0;
-            for (int i = 1; i < SpamCounter.Count; i++)
-            {			
-                if (SpamCounter[i] - SpamCounter[i - 1] < 200)
-                    littleTime++;
-            }
-            double percentage = (double) littleTime / numberOfTasks;
-            return SpamCounter.Count > 2 * numberOfTasks || percentage > 0.3;
+	        return SoftCheck(numberOfTasks);
         }
 
         private static void Clear()
