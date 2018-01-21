@@ -7,11 +7,11 @@ namespace Assets.Scripts.Classes.Msgs
     [Serializable]
     public class Parameters
     {
-        public readonly long TaskId;
-        public readonly int MsgType;
-        public readonly double TargetDisplayTime;
-        public readonly double CueToTargetTime;
-        public readonly double Threshold;
+        public long TaskId;
+        public int MsgType;
+        public double TargetDisplayTime;
+        public double CueToTargetTime;
+        public double Threshold;
 
         public Parameters() { }
 

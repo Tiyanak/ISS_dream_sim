@@ -12,35 +12,35 @@ namespace Monetary_server
     public class Reaction
     {
 
-        public long taskId;
-        public int msgType;
-        public string taskType;
-        public bool incentive;
-        public double reactionTime;
-        public double threshold;
+        public long TaskId;
+        public int MsgType;
+        public string TaskType;
+        public bool Incentive;
+        public double ReactionTime;
+        public double Threshold;
 
         public Reaction() { }
 
         public Reaction(long taskId, int msgType, string taskType, bool incentive, double reactionTime, double threshold)
         {
-            this.taskId = taskId;
-            this.msgType = msgType;
-            this.taskType = taskType;
-            this.incentive = incentive;
-            this.reactionTime = reactionTime;
-            this.threshold = threshold;
+            this.TaskId = taskId;
+            this.MsgType = msgType;
+            this.TaskType = taskType;
+            this.Incentive = incentive;
+            this.ReactionTime = reactionTime;
+            this.Threshold = threshold;
         }
 
         public Reaction(string serializedData)
         {
             Reaction desData = this.Deserialize(serializedData);
 
-            this.taskId = desData.taskId;
-            this.msgType = desData.msgType;
-            this.taskType = desData.taskType;
-            this.incentive = desData.incentive;
-            this.reactionTime = desData.reactionTime;
-            this.threshold = desData.threshold;
+            this.TaskId = desData.TaskId;
+            this.MsgType = desData.MsgType;
+            this.TaskType = desData.TaskType;
+            this.Incentive = desData.Incentive;
+            this.ReactionTime = desData.ReactionTime;
+            this.Threshold = desData.Threshold;
 
         }
 
@@ -75,12 +75,12 @@ namespace Monetary_server
 
         public override string ToString()
         {
-            return "Id: " + this.taskId.ToString() +
-                "; MsgType: " + this.msgType.ToString() + 
-                "; Task: " + this.taskType +
-                "; Incentive: " + this.incentive.ToString() +
-                "; Reaction time: " + this.reactionTime.ToString() +
-                "; Threshold: " + this.threshold.ToString();
+            return "Id: " + this.TaskId.ToString() +
+                "; MsgType: " + this.MsgType.ToString() + 
+                "; Task: " + this.TaskType +
+                "; Incentive: " + this.Incentive.ToString() +
+                "; Reaction time: " + this.ReactionTime.ToString() +
+                "; Threshold: " + this.Threshold.ToString();
         }
 
         public string getFieldsCSV()
@@ -95,22 +95,22 @@ namespace Monetary_server
 
         public string toCSV()
         {
-            return this.taskId.ToString() +
-                "," + this.msgType.ToString() +
-                "," + this.taskType +
-                "," + this.incentive.ToString() +
-                "," + this.reactionTime.ToString() +
-                "," + this.threshold.ToString();
+            return this.TaskId.ToString() +
+                "," + this.MsgType.ToString() +
+                "," + this.TaskType +
+                "," + this.Incentive.ToString() +
+                "," + this.ReactionTime.ToString() +
+                "," + this.Threshold.ToString();
         }
 
         public string toSemiCSV()
         {
-            return this.taskId.ToString() +
-                ";" + this.msgType.ToString() +
-                ";" + this.taskType +
-                ";" + this.incentive.ToString() +
-                ";" + this.reactionTime.ToString() +
-                ";" + this.threshold.ToString();
+            return this.TaskId.ToString() +
+                ";" + this.MsgType.ToString() +
+                ";" + this.TaskType +
+                ";" + this.Incentive.ToString() +
+                ";" + this.ReactionTime.ToString() +
+                ";" + this.Threshold.ToString();
         }
     }
 }

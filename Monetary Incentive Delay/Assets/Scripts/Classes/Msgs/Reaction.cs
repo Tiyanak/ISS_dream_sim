@@ -8,12 +8,12 @@ namespace Assets.Scripts.Classes.Msgs
     public class Reaction
     {
 
-       public readonly long TaskId;
-        public readonly int MsgType;
-        public readonly string TaskType;
-        public readonly bool Incentive;
-        public readonly double ReactionTime;
-        public readonly double Threshold;
+        public long TaskId;
+        public int MsgType;
+        public string TaskType;
+        public bool Incentive;
+        public double ReactionTime;
+        public double Threshold;
 
         public Reaction() { }
 

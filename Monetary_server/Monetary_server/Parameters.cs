@@ -11,32 +11,32 @@ namespace Monetary_server
     [Serializable]
     public class Parameters
     {
-        public long taskId;
-        public int msgType;
-        public double targetDisplayTime;
-        public double cueToTargetTime;
-        public double threshold;
+        public long TaskId;
+        public int MsgType;
+        public double TargetDisplayTime;
+        public double CueToTargetTime;
+        public double Threshold;
 
         public Parameters() { }
 
         public Parameters(long taskId, int msgType, double targetDisplayTime, double cueToTargetTime, double threshold)
         {
-            this.taskId = taskId;
-            this.msgType = msgType;
-            this.targetDisplayTime = targetDisplayTime;
-            this.cueToTargetTime = cueToTargetTime;
-            this.threshold = threshold;
+            this.TaskId = taskId;
+            this.MsgType = msgType;
+            this.TargetDisplayTime = targetDisplayTime;
+            this.CueToTargetTime = cueToTargetTime;
+            this.Threshold = threshold;
         }
 
         public Parameters(string serializedData)
         {
             Parameters des = (Parameters)this.Deserialize(serializedData);
 
-            this.taskId = des.taskId;
-            this.msgType = des.msgType;
-            this.targetDisplayTime = des.targetDisplayTime;
-            this.cueToTargetTime = des.cueToTargetTime;
-            this.threshold = des.threshold;
+            this.TaskId = des.TaskId;
+            this.MsgType = des.MsgType;
+            this.TargetDisplayTime = des.TargetDisplayTime;
+            this.CueToTargetTime = des.CueToTargetTime;
+            this.Threshold = des.Threshold;
         }
 
         public string Serialize()
@@ -68,11 +68,11 @@ namespace Monetary_server
 
         public override string ToString()
         {
-            return "TaskId: " + this.taskId.ToString() +
-                "; MsgType: " + this.msgType.ToString() + 
-                "; TargetDisplayTime: " + this.targetDisplayTime.ToString() +
-                "; CueToTargetTime: " + this.cueToTargetTime.ToString() +
-                "; Threshold: " + this.threshold.ToString();
+            return "TaskId: " + this.TaskId.ToString() +
+                "; MsgType: " + this.MsgType.ToString() + 
+                "; TargetDisplayTime: " + this.TargetDisplayTime.ToString() +
+                "; CueToTargetTime: " + this.CueToTargetTime.ToString() +
+                "; Threshold: " + this.Threshold.ToString();
         }
         
     }

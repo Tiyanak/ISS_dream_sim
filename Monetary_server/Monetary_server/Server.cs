@@ -67,7 +67,7 @@ namespace Monetary_server
                                 Reaction r = new Reaction(data);
                                 Console.WriteLine("Reaction: " + r.ToString());
 
-                                if (r.msgType == 1)
+                                if (r.MsgType == 1)
                                 {
                                     OnDisconnected(r, clientConnection);
                                 } else
@@ -151,18 +151,18 @@ namespace Monetary_server
 
         private void OnDisconnected(Reaction reaction, NetConnection clientConnection)
         {
-            this.writers[reaction.taskId].closeFile();
-            this.writers.Remove(reaction.taskId);
-            this.reactions.Remove(reaction.taskId);
+            this.writers[reaction.TaskId].closeFile();
+            this.writers.Remove(reaction.TaskId);
+            this.reactions.Remove(reaction.TaskId);
         }
 
         private void OnData(Reaction reaction, NetConnection clientConnection)
         {
-            this.writers[reaction.taskId].writeLine(reaction.toSemiCSV());
-            this.reactions[reaction.taskId].Add(reaction.reactionTime);
+            this.writers[reaction.TaskId].writeLine(reaction.toSemiCSV());
+            this.reactions[reaction.TaskId].Add(reaction.ReactionTime);
 
-            double newThreshold = GaussHandler.GetAcceptableReationTime(this.reactions[reaction.taskId]);
-            SendMsg(new Parameters(reaction.taskId, 2, 0, 0, newThreshold).Serialize(), clientConnection);
+            double newThreshold = GaussHandler.GetAcceptableReationTime(this.reactions[reaction.TaskId]);
+            SendMsg(new Parameters(reaction.TaskId, 2, 0, 0, newThreshold).Serialize(), clientConnection);
         }
         
         public static long GetMilliseconds()
