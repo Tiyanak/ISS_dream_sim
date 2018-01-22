@@ -14,7 +14,7 @@
             else
                 performance = "You did nothing!";
             
-            if (AntiSpamming.DidHeSpam(numberOfTasks))
+            if (AntiSpamming.DidHeSpam(4))
             {
                 performance += " \nBut you spammed the keyboard";
             }

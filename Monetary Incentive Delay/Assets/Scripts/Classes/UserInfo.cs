@@ -66,7 +66,8 @@ namespace Assets.Scripts.Classes
 		[UsedImplicitly]
 		private void Update()
 		{
-			_spacebarPressed = AntiSpamming.CheckForSpamming(_currentDisplayStatus, _spacebarPressed);
+			_spacebarPressed = Input.GetKeyDown("space");
+
 			CheckSkipping();
 			_passedTime += Time.deltaTime * 1000;
 		

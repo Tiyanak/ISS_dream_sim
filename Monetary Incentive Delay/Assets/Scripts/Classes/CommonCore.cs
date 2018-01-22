@@ -112,11 +112,13 @@ namespace Assets.Scripts.Classes
 			_iSprite = -1;
 			_passedTime = 0;
 			_numberOfSpamming = 0;
+			AntiSpamming.Clear();
 		}
 
 		public void Update()
 		{
-			_spacebarPressed = AntiSpamming.CheckForSpamming(_currentDisplayStatus, _spacebarPressed);
+			_spacebarPressed = Input.GetKeyDown("space");			
+
 			CheckSkipping();
 			_passedTime += Time.deltaTime * 1000;
 
@@ -149,6 +151,7 @@ namespace Assets.Scripts.Classes
 					}
 					break;
 				case DisplayStatus.WaitToDisplaySprite:
+					AntiSpamming.CheckForSpamming(_currentDisplayStatus, _spacebarPressed);
 					HandleUserInput();
 					if (_passedTime > _spriteSettings.GetTimeSettings(_upcomingSpriteType).SpriteDelayTime)
 					{
@@ -158,8 +161,10 @@ namespace Assets.Scripts.Classes
 					}
 					break;
 				case DisplayStatus.DisplayingSprite:
-					if (_passedTime > _spriteSettings.GetTimeSettings(_currentSpriteType).SpriteDisplayTime)
+					if (_passedTime > _spriteSettings.GetTimeSettings(_currentSpriteType).SpriteDisplayTime) {
+						AntiSpamming.Clear();
 						RemoveSprite();
+					}
 					HandleUserInput();
 					break;
 				case DisplayStatus.WaitingUserInput:
@@ -213,8 +218,11 @@ namespace Assets.Scripts.Classes
 		{
 			RemoveNotification();
 			bool isIncentive = _taskType[(_iSprite - 1) / 3] != 0;
+
 			if (!_spacebarPressed || _iSprite < 1) return;
+
 			CheckSpamming();
+			
 			if (_iSprite < 1 || !(_reactionTimes[(_iSprite - 1) / 3] < 0)) return;
 			
 			SpriteTypes type = SpriteTypes.Correct;
@@ -224,11 +232,12 @@ namespace Assets.Scripts.Classes
 			
 			if (!isIncentive) {
 				_taskSettings.NonIncentiveOrder[2] = type;
-				SendFeedback(_passedTime, false);
+				SendFeedback(_passedTime, false);				
 			} else {
 				_taskSettings.IncentiveOrder[2] = type;
 				SendFeedback(_passedTime, true);
 			}
+			
 		}
 
 		private void ShowSprite()
@@ -267,15 +276,17 @@ namespace Assets.Scripts.Classes
 
 		private void CheckSpamming()
 		{
-			bool spamming = AntiSpamming.SoftCheck((_iSprite - 1) / 3);
+			bool spamming = AntiSpamming.DidHeSpam(1);
 			if (spamming && _spammingText.gameObject.activeInHierarchy == false)
 				ShowNotification();
 		}
 
 		private void ShowNotification()
 		{
-			if (++_numberOfSpamming >= 3)
+			
+			if (++_numberOfSpamming >= 3) {
 				_currentDisplayStatus = DisplayStatus.GoToMainMenu;
+			}
 			else
 			{
 				_timeOfSpamming = TimeHandler.GetMilliseconds();

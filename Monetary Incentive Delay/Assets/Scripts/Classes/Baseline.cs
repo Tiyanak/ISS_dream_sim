@@ -29,6 +29,7 @@ namespace Assets.Scripts.Classes
 		private int _iSprite;
 		private bool _spacebarPressed;
 		private bool _allowedSkipping;
+		private int _spamCounter = 0;
 
 		public Baseline()
 		{
@@ -68,13 +69,15 @@ namespace Assets.Scripts.Classes
 				_reactionTimes[i] = -1;
 			_iSprite = -1;
 			_passedTime = 0;
+			AntiSpamming.Clear();
 		}
 
 		// Update is called once per frame
 		[UsedImplicitly]
 		private void Update()
 		{
-			_spacebarPressed = AntiSpamming.CheckForSpamming(_currentDisplayStatus, _spacebarPressed);
+			_spacebarPressed = Input.GetKeyDown("space");
+
 			CheckSkipping();
 			_passedTime += Time.deltaTime * 1000;
 
@@ -140,7 +143,7 @@ namespace Assets.Scripts.Classes
 			string performance = OutputTextHandler.Performance(mean, _baselineSettings.NumberOfTasks);
 			_panel.GetComponentInChildren<Text>().text = performance;
 			GlobalSettings.Gs?.UpdateThreshold(_threshold);
-			_currentDisplayStatus = AntiSpamming.DidHeSpam(_baselineSettings.NumberOfTasks) || !(mean < double.MaxValue) 
+			_currentDisplayStatus = AntiSpamming.DidHeSpam(4) || !(mean < double.MaxValue) 
 				? DisplayStatus.GoToMainMenu : DisplayStatus.DisplayingInfo;
 			UnityClient.Communicator.Connect();
 		}
@@ -148,6 +151,7 @@ namespace Assets.Scripts.Classes
 		private void HandleUserInput()
 		{
 			if (!_spacebarPressed) return;
+			if (AntiSpamming.CheckForSpamming(_currentDisplayStatus, _spacebarPressed)) _spamCounter++;
 			if (_iSprite < 0 || !(_reactionTimes[_iSprite] < 0)) return;
 			_reactionTimes[_iSprite] = _passedTime;
 		}
