@@ -1,0 +1,16 @@
+C:\Users\Igor Farszky\workspace\ISS_dream_sim\Monetary_server\Monetary_server\Monetary_server\bin\Debug\Monetary_server.exe.config
+C:\Users\Igor Farszky\workspace\ISS_dream_sim\Monetary_server\Monetary_server\Monetary_server\bin\Debug\Monetary_server.exe
+C:\Users\Igor Farszky\workspace\ISS_dream_sim\Monetary_server\Monetary_server\Monetary_server\bin\Debug\Monetary_server.pdb
+C:\Users\Igor Farszky\workspace\ISS_dream_sim\Monetary_server\Monetary_server\Monetary_server\bin\Debug\Lidgren.Network.dll
+C:\Users\Igor Farszky\workspace\ISS_dream_sim\Monetary_server\Monetary_server\Monetary_server\bin\Debug\Lidgren.Network.pdb
+C:\Users\Igor Farszky\workspace\ISS_dream_sim\Monetary_server\Monetary_server\Monetary_server\obj\Debug\Monetary_server.csprojResolveAssemblyReference.cache
+C:\Users\Igor Farszky\workspace\ISS_dream_sim\Monetary_server\Monetary_server\Monetary_server\obj\Debug\Monetary_server.exe
+C:\Users\Igor Farszky\workspace\ISS_dream_sim\Monetary_server\Monetary_server\Monetary_server\obj\Debug\Monetary_server.pdb
+C:\Users\Igor Farszky\workspace\ISS_dream_sim\Monetary_server\Monetary_server\bin\Debug\Monetary_server.exe.config
+C:\Users\Igor Farszky\workspace\ISS_dream_sim\Monetary_server\Monetary_server\obj\Debug\Monetary_server.exe
+C:\Users\Igor Farszky\workspace\ISS_dream_sim\Monetary_server\Monetary_server\obj\Debug\Monetary_server.pdb
+C:\Users\Igor Farszky\workspace\ISS_dream_sim\Monetary_server\Monetary_server\bin\Debug\Monetary_server.exe
+C:\Users\Igor Farszky\workspace\ISS_dream_sim\Monetary_server\Monetary_server\bin\Debug\Monetary_server.pdb
+C:\Users\Igor Farszky\workspace\ISS_dream_sim\Monetary_server\Monetary_server\bin\Debug\Lidgren.Network.dll
+C:\Users\Igor Farszky\workspace\ISS_dream_sim\Monetary_server\Monetary_server\bin\Debug\Lidgren.Network.pdb
+C:\Users\Igor Farszky\workspace\ISS_dream_sim\Monetary_server\Monetary_server\obj\Debug\Monetary_server.csprojResolveAssemblyReference.cache

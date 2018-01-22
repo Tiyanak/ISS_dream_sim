@@ -1,0 +1,8 @@
+C:\Users\Igor Farszky\workspace\ISS_dream_sim\Monetary_server\Monetary_server\bin\Release\Monetary_server.exe.config
+C:\Users\Igor Farszky\workspace\ISS_dream_sim\Monetary_server\Monetary_server\bin\Release\Monetary_server.exe
+C:\Users\Igor Farszky\workspace\ISS_dream_sim\Monetary_server\Monetary_server\bin\Release\Monetary_server.pdb
+C:\Users\Igor Farszky\workspace\ISS_dream_sim\Monetary_server\Monetary_server\bin\Release\Lidgren.Network.dll
+C:\Users\Igor Farszky\workspace\ISS_dream_sim\Monetary_server\Monetary_server\bin\Release\Lidgren.Network.pdb
+C:\Users\Igor Farszky\workspace\ISS_dream_sim\Monetary_server\Monetary_server\obj\Release\Monetary_server.csprojResolveAssemblyReference.cache
+C:\Users\Igor Farszky\workspace\ISS_dream_sim\Monetary_server\Monetary_server\obj\Release\Monetary_server.exe
+C:\Users\Igor Farszky\workspace\ISS_dream_sim\Monetary_server\Monetary_server\obj\Release\Monetary_server.pdb
